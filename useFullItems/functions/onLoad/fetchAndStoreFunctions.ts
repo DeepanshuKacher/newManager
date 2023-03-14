@@ -6,7 +6,7 @@ export const fetchAndStoreOrders = async () => {
     parentUrl: "orders",
   });
 
-  console.log("orders fetch", data);
+  // console.log("orders fetch", data);
 
   store.dispatch(actionTypes.storeDishOrders(data));
 };
@@ -16,7 +16,7 @@ export const fetchAndStoreTableSession = async () => {
     parentUrl: "sessions",
   });
 
-  console.log("fetch table sessin ", data);
+  // console.log("fetch table sessin ", data);
 
   const tableSessions: any = {};
 
