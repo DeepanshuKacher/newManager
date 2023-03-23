@@ -22,6 +22,11 @@ export const selectRestaurantFunction = async (
   //   },
   // });
 
+  if (!restaurantId) {
+    if (constants.IS_DEVELOPMENT) console.log("Please Provide restaurant id");
+    return alert("Some Error");
+  }
+
   store.dispatch(actionTypes.updateLoaderState(true));
 
   await axios
@@ -39,12 +44,12 @@ export const selectRestaurantFunction = async (
     .then(() =>
       axios
         .get(`/restaurants/${restaurantId}`)
-        .then((response) => {
-          // if (constants.IS_DEVELOPMENT) console.log(response.data);
-          return response;
-        })
+        // .then((response) => {
+        // if (constants.IS_DEVELOPMENT) console.log(response.data);
+        // return response;
+        // })
         .then((data) => {
-          // console.log({ initialFetchData: data.data });
+          console.log({ initialFetchData: data.data });
           store.dispatch(actionTypes.updateRestaurantInfo(data.data));
         })
         .then(() => {

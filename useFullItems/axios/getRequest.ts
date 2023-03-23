@@ -1,5 +1,5 @@
 import { AxiosError, AxiosRequestConfig } from "axios";
-import { concatString } from "../functions";
+import { concatString, selectRestaurantFunction } from "../functions";
 import { axios, ControllerURLS } from "./axios";
 import { store, actionTypes } from "../redux";
 
@@ -9,12 +9,14 @@ export const axiosGetFunction = async ({
   childUrl = "",
   config,
   useGlobalLoader,
+  execute_onLoadFunction,
 }: {
   thenFunction?: any;
   parentUrl: ControllerURLS;
   childUrl?: string;
   config?: AxiosRequestConfig;
   useGlobalLoader?: boolean;
+  execute_onLoadFunction?: boolean;
 }) => {
   if (useGlobalLoader) store.dispatch(actionTypes.updateLoaderState(true));
   return await axios
@@ -29,7 +31,11 @@ export const axiosGetFunction = async ({
       alert("Error " + error.name);
       console.log(error, error.cause, error.message, error.name, error.config);
     })
-    .finally(() => {
+    .finally(async () => {
+      if (execute_onLoadFunction === true)
+        await selectRestaurantFunction(
+          store.getState().restaurantInfo.defaultValues.id
+        );
       if (useGlobalLoader) store.dispatch(actionTypes.updateLoaderState(false));
     });
 };

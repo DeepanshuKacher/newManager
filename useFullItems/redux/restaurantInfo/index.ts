@@ -1,6 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DishesSliceType } from "../../../interfaces";
-import type { RootState } from "../store";
 
 export interface Dish {
   id: string;
@@ -52,6 +50,7 @@ interface InitialDataTypes {
     waiters: Waiter[];
     dishesh: Dish[];
     chefs: Chef[];
+    settings: { allowWaiterToClearSession: boolean };
   };
 }
 
@@ -64,6 +63,7 @@ const initialState: InitialDataTypes = {
     waiters: [],
     dishesh: [],
     chefs: [],
+    settings: { allowWaiterToClearSession: false },
   },
 };
 

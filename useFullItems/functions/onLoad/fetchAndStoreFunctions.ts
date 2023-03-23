@@ -16,7 +16,6 @@ export const fetchAndStoreTableSession = async () => {
     parentUrl: "sessions",
   });
 
-  // console.log("fetch table sessin ", data);
 
   const tableSessions: any = {};
 
