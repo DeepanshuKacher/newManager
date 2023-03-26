@@ -11,13 +11,15 @@ export const axiosPostFunction = async ({
   data,
   config,
   loader = false,
-}: {
+}: // loadFullData = false,
+{
   parentUrl: ControllerURLS;
   thenFunction?: any;
   childUrl?: string;
   data: any;
   config?: AxiosRequestConfig<any>;
   loader?: boolean;
+  // loadFullData?: boolean;
 }) => {
   if (loader) store.dispatch(actionTypes.updateLoaderState(true));
   return await axios

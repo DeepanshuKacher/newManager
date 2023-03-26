@@ -15,6 +15,7 @@ import Table from "react-bootstrap/Table";
 import InputGroup from "react-bootstrap/InputGroup";
 import { axiosPostFunction } from "../../../useFullItems/axios";
 import { useRouter } from "next/router";
+import { loadFullData } from "../../../useFullItems/functions";
 
 interface Props {
   handleClose: () => void;
@@ -74,6 +75,7 @@ export const AddEmployeeModal = (props: Props) => {
         data: formData,
         parentUrl: workerType,
         loader: true,
+        thenFunction: loadFullData,
       });
     }
 

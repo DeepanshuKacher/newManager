@@ -4,19 +4,23 @@ import { useState } from "react";
 import { useAppSelector } from "../../../useFullItems/redux";
 import { OrderDetailModal } from "../../../components/pagesComponents/realtime/orders/DetailModal";
 import { Order } from "./redux";
+import { constants } from "../../../useFullItems/constants";
 
 function Orders() {
   const [orderDetailModal, setOrderDetailModal] = useState<null | Order>(null);
 
-  const restaurantDetail = useAppSelector(
-    (store) => store.restaurantInfo.defaultValues
-  );
-
-  const { dishesh: disheshData, waiters, tables } = restaurantDetail;
+  const {
+    dishesh: disheshData,
+    waiters,
+    tables,
+    chefs,
+  } = useAppSelector((store) => store.restaurantInfo.defaultValues);
 
   const orders = useAppSelector((store) => store.orderContainer.orders);
 
   const toggleOrderDetailModal = () => setOrderDetailModal(null);
+
+  if (constants.IS_DEVELOPMENT) console.log({ orders });
 
   return (
     <>
@@ -30,12 +34,13 @@ function Orders() {
         <thead>
           <tr className="table-primary">
             <th scope="col">#</th>
+            <th scope="col">Order Time</th>
             <th scope="col">Food</th>
             <th scope="col">Table No.</th>
             <th scope="col">Ordered by</th>
             <th scope="col">Chef Assign</th>
             {/* This is optional for small restro Chef Assignks */}
-            <th scope="col">Waiter Assign</th>
+            {/* <th scope="col">Waiter Assign</th> */}
             {/* This is optional for self-service restro waiter Assign */}
             <th scope="col">
               View
@@ -45,14 +50,13 @@ function Orders() {
         </thead>
         <tbody>
           {orders.map((item, index) => {
-            // console.log(item.orderId);
             const tableSection = tables.find(
               (table) => table.id === item.tableSectionId
             );
             return (
-              <tr key={index}>
-                {/* key will be orderId */}
+              <tr key={item.orderId}>
                 <th scope="row">{index + 1}</th>
+                <td>{new Date(item.createdAt).toLocaleTimeString()}</td>
                 <td>
                   {disheshData.find((dish) => dish.id === item.dishId)?.name}
                 </td>
@@ -65,8 +69,11 @@ function Orders() {
                   {waiters.find((waiter) => waiter.id === item.orderedBy)
                     ?.name || "self"}
                 </td>
-                <td>chef Assign</td>
-                <td>waiter assign</td>
+                <td>
+                  {chefs.find((chef) => chef.id === item.chefAssign)?.name ||
+                    ""}
+                </td>
+                {/* <td>waiter assign</td> */}
                 <td
                   style={{
                     cursor: "pointer",
@@ -74,7 +81,6 @@ function Orders() {
                   onClick={() => setOrderDetailModal(item)}
                 >
                   <img src="/icons/edit.svg" alt="edit icon" />
-                  {/* <Image fluid src="/icons/edit.svg" /> */}
                 </td>
               </tr>
             );
