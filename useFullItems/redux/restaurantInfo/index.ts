@@ -41,7 +41,7 @@ interface Chef {
   available: boolean;
 }
 
-interface InitialDataTypes {
+export interface InitialDataTypes {
   defaultValues: {
     name: string;
     city: string;

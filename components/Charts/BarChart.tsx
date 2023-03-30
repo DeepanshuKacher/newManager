@@ -25,7 +25,7 @@ ChartJS.register(
 // Chart.defaults.datasets.
 
 // ["January", "February", "March", "April", "May", "June", "July"];
-const labels = ["Fish", "Dosa", "Dosa", "Dosa", "Dosa", "Dosa", "Dosa"];
+const labels = ["Fish", "Dosa", "Biryani", "Idli", "Chai", "Paneer", "Cofee"];
 
 export function BarChart() {
   return (

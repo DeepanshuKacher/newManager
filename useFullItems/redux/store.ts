@@ -7,6 +7,7 @@ import addDishToSection from "../../pages/customize_restaurant/multiple_dish/sec
 import orderContainer from "../../pages/realtime/orders/redux";
 import tableOrders from "../../pages/realtime/table_status/redux";
 import billingTable from "../../pages/realtime/table_status/[table_name]/redux";
+import selfInfo from "./selfInfo";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
     orderContainer,
     tableStatus: tableOrders,
     billingTable,
+    selfInfo,
   },
 });
 

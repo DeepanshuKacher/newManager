@@ -1,22 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import FormControl from "react-bootstrap/FormControl";
-import InputGroup from "react-bootstrap/InputGroup";
+
 import { NavBar } from "../../../../components/pagesComponents/customize_restaurant/dishes/NavBar";
 /* utitlies */
-import { axiosPostFunction } from "../../../../useFullItems/axios";
-import { Loader, ErrorUI } from "../../../../components/Common";
 import { DishesSliceType } from "../../../../interfaces";
-import { useRouter } from "next/router";
-import {
-  useAppDispatch,
-  actionTypes,
-  useAppSelector,
-} from "../../../../useFullItems/redux";
 import Head from "next/head";
 import { Column } from "../../../../components/pagesComponents/customize_restaurant/dishes/section/Column";
 import { DeleteModal } from "../../../../components/pagesComponents/customize_restaurant/dishes/section/DeleteModals";

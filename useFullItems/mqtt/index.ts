@@ -1,7 +1,10 @@
+import { Order } from "../../pages/realtime/orders/redux";
+import { RestaurantSliceType } from "../redux/restaurantInfo";
 import {
   updateTableStatus,
   pushInOrderContainer,
   convertCartToOrder,
+  updateOrderStatus,
 } from "./functions";
 
 const mqttPayloadCode = {
@@ -26,11 +29,23 @@ export const mqttFunction = (props: Props) => {
       break;
 
     case "dishOrder":
-      pushInOrderContainer(message);
+      const dishOrdeData: {
+        order: Order;
+        orderNo: number;
+      } = message;
+      pushInOrderContainer(dishOrdeData);
       break;
 
     case "cardDishOrder":
-      convertCartToOrder(message);
+      const data: {
+        orderArray: Order[];
+        orderNo: number;
+      } = message;
+      convertCartToOrder(data);
+      break;
+
+    case "updateOrder":
+      updateOrderStatus(message);
       break;
 
     default:

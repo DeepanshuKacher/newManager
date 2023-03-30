@@ -19,27 +19,26 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [pageFullyLoaded, setPageFullyLoaded] = useState(false);
   const [restaurantId, setRestaurantId] = useState<string>();
+  const [selfInfo, setSelfInfo] = useState<{ id: string | undefined }>({
+    id: undefined,
+  });
 
   store.subscribe(() => {
     const getRestaurantId = store.getState().restaurantInfo.defaultValues.id;
-    if (getRestaurantId !== restaurantId) setRestaurantId(getRestaurantId);
+    const selfData = store.getState().selfInfo;
+    if (getRestaurantId && getRestaurantId !== restaurantId)
+      setRestaurantId(getRestaurantId);
+    if (
+      selfData?.defaultValues?.id &&
+      selfInfo.id !== selfData.defaultValues.id
+    )
+      setSelfInfo(selfData.defaultValues);
   });
 
   useEffect(() => {
-    let client: MqttClient;
-    if (restaurantId) client = mqttConnection(restaurantId);
-
-    (async () => {
-      if (restaurantId) {
-        // console.log({ restaurantId });
-        await selectRestaurantFunction(restaurantId, () => {
-          setPageFullyLoaded(true);
-        });
-      } else {
-        // await router.push("/");
-        setPageFullyLoaded(true);
-      }
-    })();
+    let client: MqttClient | void;
+    if (restaurantId && selfInfo.id)
+      client = mqttConnection(restaurantId, selfInfo.id);
 
     return () => {
       if (client)
@@ -47,12 +46,36 @@ export default function App({ Component, pageProps }: AppProps) {
           if (constants.IS_DEVELOPMENT) console.log("mqtt connection ended");
         });
     };
-  }, [restaurantId]);
+  }, [restaurantId, selfInfo.id]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if (restaurantId) {
+  //       console.log({ restaurantId });
+  //       await selectRestaurantFunction(restaurantId, () => {
+  //         setPageFullyLoaded(true);
+  //       });
+  //     } else {
+  //       // await router.push("/");
+  //       setPageFullyLoaded(true);
+  //     }
+  //   })();
+  // }, []);
 
   useEffect(() => {
-    const restaurantId =
-      sessionStorage.getItem(constants.restaurantId) || undefined;
-    setRestaurantId(restaurantId);
+    (async () => {
+      const restaurantId =
+        sessionStorage.getItem(constants.restaurantId) || undefined;
+      if (restaurantId) {
+        setRestaurantId(restaurantId);
+        await selectRestaurantFunction(restaurantId);
+        setPageFullyLoaded(true);
+        router.push("/dashboard");
+      } else {
+        setPageFullyLoaded(true);
+        router.push("/");
+      }
+    })();
   }, []);
 
   if (!pageFullyLoaded) return <Loader />;

@@ -22,11 +22,14 @@ function MainCard({
   return (
     <Col lg="3" md="4">
       <Card
-        onClick={() =>
-          selectRestaurantFunction(restaurantId, () =>
-            router.push("/dashboard")
-          )
-        }
+        onClick={async () => {
+          await selectRestaurantFunction(
+            restaurantId
+            // , () =>router.push("/dashboard")
+          );
+
+          router.push("/dashboard");
+        }}
       >
         <Card.Header style={{ cursor: "pointer" }} className="text-center">
           <Card.Title>{restaurantName}</Card.Title>

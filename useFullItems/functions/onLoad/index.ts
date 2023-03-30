@@ -4,13 +4,11 @@ import { constants } from "../../constants";
 import { actionTypes, store } from "../../redux";
 import {
   fetchAndStoreOrders,
+  fetchAndStoreRestaurantAndSelfDetail,
   fetchAndStoreTableSession,
 } from "./fetchAndStoreFunctions";
 
-export const selectRestaurantFunction = async (
-  restaurantId: string,
-  lastThenFunction?: () => void
-) => {
+export const selectRestaurantFunction = async (restaurantId: string) => {
   // axiosGetFunction({
   //   parentUrl: "restaurants",
   //   childUrl: restaurantId,
@@ -41,27 +39,6 @@ export const selectRestaurantFunction = async (
       ] = `Bearer ${response?.data?.access_token}`;
     })
     .then(() => sessionStorage.setItem(constants.restaurantId, restaurantId))
-    .then(() =>
-      axios
-        .get(`/restaurants/${restaurantId}`)
-        // .then((response) => {
-        // if (constants.IS_DEVELOPMENT) console.log(response.data);
-        // return response;
-        // })
-        .then((data) => {
-          console.log({ initialFetchData: data.data });
-          store.dispatch(actionTypes.updateRestaurantInfo(data.data));
-        })
-        .then(() => {
-          if (lastThenFunction) {
-            lastThenFunction();
-          }
-        })
-        .catch((error: AxiosError) => {
-          alert("Error");
-          console.log({ error });
-        })
-    )
     .catch((error: AxiosError) => {
       alert("Error");
       console.log({ error });
@@ -72,9 +49,11 @@ export const selectRestaurantFunction = async (
 
   const fetchAndStoreOrdersPromis = fetchAndStoreOrders();
   const fetchAndStoreTableSessionPromis = fetchAndStoreTableSession();
+  const fetchAndStoreRestaurantAndSelfDetailPromis = fetchAndStoreRestaurantAndSelfDetail();
 
   await Promise.all([
     fetchAndStoreOrdersPromis,
     fetchAndStoreTableSessionPromis,
+    fetchAndStoreRestaurantAndSelfDetailPromis,
   ]);
 };

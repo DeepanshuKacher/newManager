@@ -12,12 +12,16 @@ import {
 import {
   unshiftInOrderContainer,
   storeDishOrders,
+  orderAccepted,
+  orderCompleted,
+  orderRemove,
 } from "../../pages/realtime/orders/redux";
 import {
   updateTableStatus,
   loadTableStatus,
 } from "../../pages/realtime/table_status/redux";
 import { updateBillingTable } from "../../pages/realtime/table_status/[table_name]/redux";
+import { updateSelfInfo } from "./selfInfo";
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -35,4 +39,8 @@ export const actionTypes = {
   storeDishOrders,
   loadTableStatus,
   updateBillingTable,
+  orderAccepted,
+  orderCompleted,
+  orderRemove,
+  updateSelfInfo,
 };

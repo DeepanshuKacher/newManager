@@ -8,6 +8,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartData,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
@@ -24,7 +25,7 @@ ChartJS.register(
 
 const labels = ["January", "February", "March", "April", "May", "June", "July"];
 
-export const data = {
+export const defaultData: ChartData<"line", number[], string> = {
   labels,
   datasets: [
     {
@@ -42,7 +43,12 @@ export const data = {
   ],
 };
 
-export function LineChart() {
+interface Props {
+  data?: ChartData<"line", number[], string>;
+}
+
+export function LineChart(props: Props) {
+  const { data } = props;
   return (
     <Line
       options={{
@@ -59,7 +65,7 @@ export function LineChart() {
         },
         maintainAspectRatio: false,
       }}
-      data={data}
+      data={data || defaultData}
     />
   );
 }

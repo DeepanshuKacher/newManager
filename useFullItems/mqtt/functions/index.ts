@@ -19,9 +19,54 @@ export const updateTableStatus = ({
   );
 };
 
-export const pushInOrderContainer = (orderDetail: Order) =>
-  store.dispatch(actionTypes.unshiftInOrderContainer(orderDetail));
+export const pushInOrderContainer = ({
+  order,
+  orderNo,
+}: {
+  order: Order;
+  orderNo: number;
+}) => store.dispatch(actionTypes.unshiftInOrderContainer({ order, orderNo }));
 
-export const convertCartToOrder = (orders: Order[]) => {
-  store.dispatch(cartToOrder(orders));
+export const convertCartToOrder = ({
+  orderArray,
+  orderNo,
+}: {
+  orderArray: Order[];
+  orderNo: number;
+}) => {
+  store.dispatch(cartToOrder({ orderArray, orderNo }));
+};
+
+const orderStatusUpdation = {
+  Accept: "Accept",
+  Completed: "Completed",
+  Remove: "Remove",
+};
+export const updateOrderStatus = (payload: {
+  orderId: string;
+  orderStatus: keyof typeof orderStatusUpdation;
+  chefId: string;
+}) => {
+  switch (payload.orderStatus) {
+    case "Accept":
+      store.dispatch(
+        actionTypes.orderAccepted({
+          chefId: payload.chefId,
+          orderId: payload.orderId,
+        })
+      );
+      break;
+
+    case "Completed":
+      store.dispatch(actionTypes.orderCompleted(payload.orderId));
+      break;
+
+    case "Remove":
+      store.dispatch(actionTypes.orderRemove(payload.orderId));
+      break;
+
+    default:
+      console.log(payload);
+      break;
+  }
 };

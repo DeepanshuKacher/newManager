@@ -49,28 +49,37 @@ function Orders() {
           </tr>
         </thead>
         <tbody>
-          {orders.map((item, index) => {
+          {orders.map((item: Order | undefined, index) => {
             const tableSection = tables.find(
-              (table) => table.id === item.tableSectionId
+              (table) => table.id === item?.tableSectionId
             );
             return (
-              <tr key={item.orderId}>
+              <tr
+                className={`${
+                  item?.chefAssign && item?.completed
+                    ? ""
+                    : item?.chefAssign
+                    ? "bg-success"
+                    : "bg-warning"
+                }`}
+                key={item?.orderId}
+              >
                 <th scope="row">{index + 1}</th>
-                <td>{new Date(item.createdAt).toLocaleTimeString()}</td>
+                <td>{new Date(item?.createdAt || "").toLocaleTimeString()}</td>
                 <td>
-                  {disheshData.find((dish) => dish.id === item.dishId)?.name}
+                  {disheshData.find((dish) => dish.id === item?.dishId)?.name}
                 </td>
                 <td>
                   {tableSection?.prefix}
-                  {item.tableNumber}
+                  {item?.tableNumber}
                   {tableSection?.suffix}
                 </td>
                 <td>
-                  {waiters.find((waiter) => waiter.id === item.orderedBy)
+                  {waiters.find((waiter) => waiter.id === item?.orderedBy)
                     ?.name || "self"}
                 </td>
                 <td>
-                  {chefs.find((chef) => chef.id === item.chefAssign)?.name ||
+                  {chefs.find((chef) => chef.id === item?.chefAssign)?.name ||
                     ""}
                 </td>
                 {/* <td>waiter assign</td> */}
@@ -78,7 +87,7 @@ function Orders() {
                   style={{
                     cursor: "pointer",
                   }}
-                  onClick={() => setOrderDetailModal(item)}
+                  onClick={() => setOrderDetailModal(item || null)}
                 >
                   <img src="/icons/edit.svg" alt="edit icon" />
                 </td>

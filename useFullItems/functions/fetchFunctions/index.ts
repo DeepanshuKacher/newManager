@@ -1,1 +1,1 @@
-export * from "./loadFullData";
+export * from "./loadRestaurantDetial";
