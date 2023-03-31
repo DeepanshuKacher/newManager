@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Table from "react-bootstrap/Table";
 import { useState } from "react";
 import { useAppSelector } from "../../../useFullItems/redux";
 import { OrderDetailModal } from "../../../components/pagesComponents/realtime/orders/DetailModal";
 import { Order } from "./redux";
-import { constants } from "../../../useFullItems/constants";
 
 function Orders() {
   const [orderDetailModal, setOrderDetailModal] = useState<null | Order>(null);
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   const {
     dishesh: disheshData,
@@ -18,9 +18,19 @@ function Orders() {
 
   const orders = useAppSelector((store) => store.orderContainer.orders);
 
-  const toggleOrderDetailModal = () => setOrderDetailModal(null);
+  useEffect(() => {
+    if (checkBottomScroll()) messageEndRef.current?.scrollIntoView();
+  }, [orders]);
 
-  if (constants.IS_DEVELOPMENT) console.log({ orders });
+  const checkBottomScroll = () => {
+    let documentHeight = document.body.scrollHeight;
+    let currentScroll = window.scrollY + window.innerHeight;
+    // When the user is [modifier]px from the bottom, fire the event.
+    let modifier = 200;
+    if (currentScroll + modifier > documentHeight) return true;
+  };
+
+  const toggleOrderDetailModal = () => setOrderDetailModal(null);
 
   return (
     <>
@@ -96,6 +106,7 @@ function Orders() {
           })}
         </tbody>
       </Table>
+      <div ref={messageEndRef} />
     </>
   );
 }
