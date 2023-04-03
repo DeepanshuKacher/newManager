@@ -1,21 +1,13 @@
-import React, { useEffect, useState } from "react";
-import Head from "next/head";
+import React, { useState } from "react";
 /* import bootstrap */
-import Nav from "react-bootstrap/Nav";
-import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
-import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-import ListGroup from "react-bootstrap/ListGroup";
-import Switch from "react-bootstrap/Switch";
 import Modal from "react-bootstrap/Modal";
-import Table from "react-bootstrap/Table";
-import InputGroup from "react-bootstrap/InputGroup";
 import { axiosPostFunction } from "../../../useFullItems/axios";
 import { useRouter } from "next/router";
-import { loadFullData } from "../../../useFullItems/functions";
+import { loadRestaurantDetail } from "../../../useFullItems/functions";
 
 interface Props {
   handleClose: () => void;
@@ -75,7 +67,7 @@ export const AddEmployeeModal = (props: Props) => {
         data: formData,
         parentUrl: workerType,
         loader: true,
-        thenFunction: loadFullData,
+        thenFunction: loadRestaurantDetail,
       });
     }
 
