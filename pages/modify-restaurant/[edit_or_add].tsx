@@ -20,28 +20,32 @@ function EditOrAdd() {
   const [restaurantCity, setRestaurantCity] = useState<string>("");
   const [latitude, setLatitude] = useState<number>();
   const [longitude, setLongitude] = useState<number>();
-  const [stateList, setStateList] = useState<string[]>();
-  const [cityList, setCityList] = useState<string[]>();
+  const [stateList, setStateList] = useState<string[]>(["Madhya Pradesh"]);
+  const [cityList, setCityList] = useState<string[]>([
+    "Shahdol",
+    "Anuppur",
+    "Indore",
+  ]);
 
   const router = useRouter();
 
-  const fetchStateLists = async () =>
-    await axiosGetFunction({
-      parentUrl: controllerUrls.restaurantsignup,
-      childUrl: "states",
-      thenFunction: setStateList,
-    });
+  // const fetchStateLists = async () =>
+  //   await axiosGetFunction({
+  //     parentUrl: controllerUrls.restaurantsignup,
+  //     childUrl: "states",
+  //     thenFunction: setStateList,
+  //   });
 
-  useEffect(() => {
-    fetchStateLists();
-  }, []);
+  // useEffect(() => {
+  //   fetchStateLists();
+  // }, []);
 
-  const fetchCities = (e: string) =>
-    axiosGetFunction({
-      parentUrl: controllerUrls.restaurantsignup,
-      childUrl: e,
-      thenFunction: setCityList,
-    });
+  // const fetchCities = (e: string) =>
+  //   axiosGetFunction({
+  //     parentUrl: controllerUrls.restaurantsignup,
+  //     childUrl: e,
+  //     thenFunction: setCityList,
+  //   });
 
   const onSubmit = async () => {
     const response = await axiosPostFunction({
@@ -95,7 +99,7 @@ function EditOrAdd() {
                   <Form.Select
                     onChange={(e) => {
                       setRestaurantState(e.target.value);
-                      fetchCities(e.target.value);
+                      // fetchCities(e.target.value);
                     }}
                     defaultValue="Select State"
                   >
