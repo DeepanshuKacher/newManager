@@ -1,22 +1,7 @@
 import { useEffect, useState } from "react";
-import Nav from "react-bootstrap/Nav";
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-import ListGroup from "react-bootstrap/ListGroup";
-import Switch from "react-bootstrap/Switch";
-import Modal from "react-bootstrap/Modal";
-import Table from "react-bootstrap/Table";
-import InputGroup from "react-bootstrap/InputGroup";
-import { Dish } from "../../../interfaces";
-import {
-  axiosDeleteFunction,
-  axiosPostFunction,
-} from "../../../useFullItems/axios";
-import { faker } from "@faker-js/faker";
+import { axiosPostFunction } from "../../../useFullItems/axios";
 import axios, { AxiosError } from "axios";
 import Head from "next/head";
 import { EntryForm } from "../../../components/pagesComponents/customize_restaurant/multiple_dish/EntryForm";
@@ -126,7 +111,9 @@ function Add_MultipleDish() {
           }
         })
       )
-      .then(() => setMultipleDish([]))
+      .then((response) => {
+        setMultipleDish([]);
+      })
       .catch((error: AxiosError) => console.log({ error }))
       .finally(() => dispatch(actionTypes.updateLoaderState(false)));
   };

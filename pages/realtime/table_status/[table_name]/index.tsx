@@ -115,6 +115,19 @@ function TableSession() {
               {selectedTableSection?.suffix}
               <Button
                 size="sm"
+                variant="danger"
+                style={{
+                  position: "absolute",
+                  right: 190,
+                  top: "50%",
+                  translate: "0 -50%",
+                }}
+                onClick={() => router.back()}
+              >
+                Back
+              </Button>
+              <Button
+                size="sm"
                 variant="info"
                 style={{
                   position: "absolute",

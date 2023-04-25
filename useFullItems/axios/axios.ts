@@ -30,6 +30,7 @@ export const controllerUrls = {
   restaurantsignup: "restaurantsignup",
   restaurantSetting: "restaurant-setting",
   revenueAnalysis: "analysis/revenue",
+  dishAnalysis: "analysis/dish",
 } as const;
 
 type KeysOfUrls = keyof typeof controllerUrls;

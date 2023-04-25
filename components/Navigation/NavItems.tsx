@@ -1,6 +1,5 @@
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 function NavItems() {
@@ -16,7 +15,7 @@ function NavItems() {
         <NavDropdown.Item onClick={()=>router.push('/analysis/revenue')}>Revenue</NavDropdown.Item>
         <NavDropdown.Item onClick={()=>router.push('/analysis/dishes')}>Dishes</NavDropdown.Item>
       </NavDropdown>
-      <Nav.Link onClick={() => router.push("/sessions")}>Sessions</Nav.Link>
+      <Nav.Link onClick={() => router.push("/sessions_log")}>Sessions Log</Nav.Link>
       <NavDropdown title="Customize Restaurant" id="offcanvasNavbarDropdown-expand-xl">
         <NavDropdown.Item onClick={()=>router.push('/customize_restaurant/dishes/section')}>Dishes</NavDropdown.Item>
         <NavDropdown.Item onClick={()=>router.push('/customize_restaurant/table_arrangements')} >Table Arrangements</NavDropdown.Item>

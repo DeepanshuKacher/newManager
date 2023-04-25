@@ -70,7 +70,7 @@ export default function App({ Component, pageProps }: AppProps) {
         setRestaurantId(restaurantId);
         await selectRestaurantFunction(restaurantId);
         setPageFullyLoaded(true);
-        router.push("/dashboard");
+        if (constants.IS_PRODUCTION) router.push("/dashboard");
       } else {
         setPageFullyLoaded(true);
         router.push("/");

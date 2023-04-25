@@ -1,5 +1,4 @@
 import { Order } from "../../pages/realtime/orders/redux";
-import { RestaurantSliceType } from "../redux/restaurantInfo";
 import {
   updateTableStatus,
   pushInOrderContainer,

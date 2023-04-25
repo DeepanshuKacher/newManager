@@ -45,10 +45,12 @@ export const defaultData: ChartData<"line", number[], string> = {
 
 interface Props {
   data?: ChartData<"line", number[], string>;
+  displayLegend?: boolean;
+  title?: string;
 }
 
 export function LineChart(props: Props) {
-  const { data } = props;
+  const { data, displayLegend, title } = props;
   return (
     <Line
       options={{
@@ -56,11 +58,11 @@ export function LineChart(props: Props) {
         plugins: {
           legend: {
             position: "top",
-            display: false,
+            display: displayLegend ? displayLegend : false,
           },
           title: {
-            display: false,
-            text: "Chart.js Line Chart",
+            display: title ? true : false,
+            text: title ? title : "",
           },
         },
         maintainAspectRatio: false,

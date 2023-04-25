@@ -31,8 +31,9 @@ export const mqttConnection = (restaurantId: string, selfId: string) => {
     if (constants.IS_DEVELOPMENT) console.log("mqtt is reconnecting");
   });
 
-  client.on("offline", () => console.log("mqtt is offline"));
-
+  client.on("offline", () => {
+    if (constants.IS_DEVELOPMENT) console.log("mqtt is offline");
+  });
   // setInterval(() => {
   //   console.log("is mqtt connected ", client.connected);
   //   console.log("is mqtt disconnected ", client.disconnected);

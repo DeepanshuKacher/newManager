@@ -8,6 +8,11 @@ export const concatString = (...args: string[]) =>
     ""
   );
 
+export const randomIntFromInterval = (min: number, max: number) => {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
 export const calculatePrice = (order: Order, dish?: Dish) => {
   let returnPrice = 0;
   const { size, fullQuantity, halfQuantity } = order;

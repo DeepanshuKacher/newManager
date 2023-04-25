@@ -22,7 +22,6 @@ export const axiosGetFunction = async ({
   return await axios
     .get(concatString(parentUrl, childUrl), config)
     .then((response) => {
-      // console.log(response.data);
       if (thenFunction) {
         thenFunction(response.data);
       } else return response.data;

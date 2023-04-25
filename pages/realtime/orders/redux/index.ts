@@ -1,7 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { constants } from "../../../../useFullItems/constants";
-import { axiosGetFunction } from "../../../../useFullItems/axios";
-import { actionTypes, store } from "../../../../useFullItems/redux";
 
 export interface Order {
   dishId: string;
@@ -21,11 +18,13 @@ export interface Order {
 interface InitialDataTypes {
   orders: Order[];
   noRepeatContainer: { [orderId: Order["orderId"]]: Order };
+  totalTodayOrder: number;
 }
 
 const initialState: InitialDataTypes = {
   orders: [],
   noRepeatContainer: {},
+  totalTodayOrder: 0,
 };
 
 const orderContainer = createSlice({
@@ -37,6 +36,14 @@ const orderContainer = createSlice({
       for (let x of state.orders) {
         state.noRepeatContainer[x.orderId] = x;
       }
+
+      const todaysDate = new Date().getDate();
+
+      state.totalTodayOrder = state.orders.reduce((acc, currentValue) => {
+        if (new Date(currentValue.createdAt).getDate() === todaysDate)
+          return acc + 1;
+        else return acc;
+      }, 0);
     },
     unshiftInOrderContainer: (
       state,
@@ -46,26 +53,13 @@ const orderContainer = createSlice({
       }>
     ) => {
       const { order, orderNo } = action.payload;
-      if (state.noRepeatContainer[order.orderId] === undefined)
-        state.orders.push(action.payload.order);
+      if (state.noRepeatContainer[order.orderId] === undefined) {
+        state.orders.push(order);
+        state.totalTodayOrder++;
+      }
 
-      const todaysDate = new Date().getDate();
-      const totalTodaysOrder = state.orders.reduce((acc, currentValue) => {
-        if (new Date(currentValue.createdAt).getDate() === todaysDate)
-          return acc + 1;
-        else return acc;
-      }, 0);
-
-      if (state.orders.length !== action.payload.orderNo) {
-        if (constants.IS_DEVELOPMENT) {
-          console.log("loading mqtt data again");
-        }
-
-        // axiosGetFunction({
-        //   parentUrl: "orders",
-        //   thenFunction: (data: Order[]) =>
-        //     store.dispatch(actionTypes.storeDishOrders(data)),
-        // });
+      if (state.totalTodayOrder !== orderNo) {
+        alert("Please reload for fresh content");
       }
     },
     cartToOrder: (
@@ -80,6 +74,12 @@ const orderContainer = createSlice({
         (order) => state.noRepeatContainer[order.orderId] === undefined
       );
       state.orders.push(...newOrderArray);
+
+      state.totalTodayOrder += newOrderArray.length;
+
+      if (state.totalTodayOrder !== orderNo) {
+        alert("Please reload for fresh content");
+      }
     },
     orderAccepted: (
       state,
