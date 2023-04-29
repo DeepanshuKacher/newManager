@@ -12,6 +12,48 @@ import { useRouter } from "next/router";
 import { OrderDetailModal } from "../../../../components/pagesComponents/realtime/orders/DetailModal";
 import { DishModal } from "../../../../components/pagesComponents/customize_restaurant/dishes/dishname/DishModal";
 import { Dish } from "../../../../interfaces";
+import Modal from "react-bootstrap/Modal";
+
+function DeleteConformationModal({
+  dishName,
+  orderId,
+  sessionId,
+  setOrderId,
+  orderPrice,
+}: {
+  dishName: string;
+  sessionId: string;
+  orderId: string;
+  setOrderId: any;
+  orderPrice: number | undefined;
+}) {
+  const deleteOrder = () => {
+    if (sessionId && orderId)
+      axiosDeleteFunction({
+        parentUrl: "orders",
+        childUrl: "order",
+        data: {
+          orderId,
+          sessionId,
+        },
+        thenFunction: () => setOrderId(""),
+      });
+  };
+
+  return (
+    <Modal show={true} centered>
+      <Modal.Body>
+        Are you sure to delete {dishName} ₹{orderPrice}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={deleteOrder} variant="danger">
+          Yes, Delete
+        </Button>
+        <Button onClick={() => setOrderId("")}>No</Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
 
 function TableSession() {
   /* initialization */
@@ -22,6 +64,9 @@ function TableSession() {
   const [tableOrders, setTableOrders] = useState<Order[]>([]);
   const [orderDetail, setOrderDetail] = useState<Order>();
   const [dishDetail, setDishDetail] = useState<Dish>();
+  const [deleteItemName, setDeleteItemName] = useState("");
+  const [deleteItemPrice, setDeleteItemPrice] = useState<number>();
+  const [deleteItemOrderId, setDeleteItemOrderId] = useState("");
 
   const { billingTable } = useAppSelector((store) => store);
 
@@ -69,6 +114,18 @@ function TableSession() {
     router.push("/realtime/table_status");
   };
 
+  const deleteOrder = (dishId: string) => {
+    if (sessionId && dishId)
+      axiosDeleteFunction({
+        parentUrl: "orders",
+        childUrl: "order",
+        data: {
+          dishId,
+          sessionId,
+        },
+      });
+  };
+
   const clearSession = () => {
     if (sessionId)
       axiosDeleteFunction({
@@ -98,6 +155,15 @@ function TableSession() {
         <OrderDetailModal
           orderDetail={orderDetail}
           toggleOrderDetailModal={disableOrderModal}
+        />
+      )}
+      {deleteItemName && deleteItemOrderId && (
+        <DeleteConformationModal
+          sessionId={sessionId!}
+          dishName={deleteItemName}
+          orderId={deleteItemOrderId}
+          setOrderId={setDeleteItemOrderId}
+          orderPrice={deleteItemPrice}
         />
       )}
 
@@ -157,11 +223,13 @@ function TableSession() {
             <th>#</th>
             <th>Dish Name</th>
             <th>Price</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
           {tableOrders?.map((item, index) => {
             const dish = dishesh.find((dish) => dish.id === item.dishId);
+            const price = calculatePrice(item, dish);
 
             return (
               <tr key={item.orderId}>
@@ -176,7 +244,17 @@ function TableSession() {
                   style={{ cursor: "pointer" }}
                   onClick={() => setOrderDetail(item)}
                 >
-                  ₹{calculatePrice(item, dish)}
+                  ₹{price}
+                </td>
+                <td
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    setDeleteItemName(dish?.name!);
+                    setDeleteItemOrderId(item.orderId);
+                    setDeleteItemPrice(price);
+                  }}
+                >
+                  Delete Item
                 </td>
               </tr>
             );

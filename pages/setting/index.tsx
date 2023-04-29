@@ -5,8 +5,9 @@ import { useAppSelector } from "../../useFullItems/redux";
 import { axiosGetFunction, controllerUrls } from "../../useFullItems/axios";
 
 function Setting() {
-  const { allowWaiterToClearSession } = useAppSelector(
-    (store) => store.restaurantInfo.defaultValues.settings
+  const allowWaiterToClearSession = useAppSelector(
+    (store) =>
+      store.restaurantInfo?.defaultValues?.settings?.allowWaiterToClearSession
   );
 
   const toggleClearSessionButton = () => {
