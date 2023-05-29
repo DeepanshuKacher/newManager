@@ -109,4 +109,4 @@ const TemplateToPrint = forwardRef((props: Props, ref: any) => {
   );
 });
 
-export default TemplateToPrint;
+export { TemplateToPrint };

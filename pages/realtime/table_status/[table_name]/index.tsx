@@ -15,7 +15,7 @@ import { Dish } from "../../../../interfaces";
 import Modal from "react-bootstrap/Modal";
 import ReactToPrint from "react-to-print";
 
-import TemplateToPrint from "../../../../components/pagesComponents/customize_restaurant/template/TemplateToPrint";
+import { TemplateToPrint } from "../../../../components/pagesComponents/customize_restaurant/template/TemplateToPrint";
 
 function DeleteConformationModal({
   dishName,

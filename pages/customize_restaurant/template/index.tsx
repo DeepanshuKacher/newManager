@@ -12,7 +12,7 @@ import {
   axiosPostFunction,
 } from "../../../useFullItems/axios";
 import { AddOperationModal } from "../../../components/pagesComponents/customize_restaurant/template/AddOperationModal";
-import TemplateToPrint from "../../../components/pagesComponents/customize_restaurant/template/TemplateToPrint";
+import { TemplateToPrint } from "../../../components/pagesComponents/customize_restaurant/template/TemplateToPrint";
 
 enum OperationType {
   Plus = "Plus",
