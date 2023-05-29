@@ -25,7 +25,7 @@ const TableInput = ({
   defaultValue,
 }: {
   editMode: boolean;
-  defaultValue: number;
+  defaultValue?: number;
 }) => (
   <InputGroup>
     <InputGroup.Text>₹</InputGroup.Text>
@@ -198,13 +198,13 @@ export const DishModal = (props: Props) => {
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.price.large.full}
+                      defaultValue={dishInfo?.price?.large?.full}
                     />
                   </td>
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.price.large.half}
+                      defaultValue={dishInfo?.price?.large?.half}
                     />
                   </td>
                 </tr>
@@ -213,13 +213,13 @@ export const DishModal = (props: Props) => {
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.price.medium.full}
+                      defaultValue={dishInfo?.price?.medium?.full}
                     />
                   </td>
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.price.medium.half}
+                      defaultValue={dishInfo?.price?.medium?.half}
                     />
                   </td>
                 </tr>
@@ -228,13 +228,13 @@ export const DishModal = (props: Props) => {
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.price.small.full}
+                      defaultValue={dishInfo?.price?.small?.full}
                     />
                   </td>
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.price.small.half}
+                      defaultValue={dishInfo?.price?.small?.half}
                     />
                   </td>
                 </tr>

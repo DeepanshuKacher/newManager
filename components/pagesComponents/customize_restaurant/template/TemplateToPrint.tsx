@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import React from "react";
 import ReactMarkdown from "react-markdown";
 
 import styles from "../../../../styles/MarkDown.module.css";
@@ -28,7 +28,7 @@ interface Props {
   operationsArray: Operations[];
 }
 
-const TemplateToPrint = forwardRef((props: Props, ref: any) => {
+const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
   const { upperMarkDown, operationsArray } = props;
 
   return (
@@ -108,5 +108,7 @@ const TemplateToPrint = forwardRef((props: Props, ref: any) => {
     </div>
   );
 });
+
+TemplateToPrint.displayName = "TemplateToPrint";
 
 export { TemplateToPrint };
