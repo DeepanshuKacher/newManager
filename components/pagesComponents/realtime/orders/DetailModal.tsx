@@ -12,7 +12,7 @@ import { useRouter } from "next/router";
 interface Props {
   toggleOrderDetailModal: () => void;
   orderDetail: Order | null;
-  refreshFunction: any;
+  refreshFunction?: any;
 }
 
 export const OrderDetailModal = (props: Props) => {
