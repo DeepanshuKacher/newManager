@@ -113,8 +113,6 @@ function AllDish() {
 
   const sectionDishesh = useFetchSectionDishesh(seletedDishSection.id);
 
-  console.log({ sectionDishesh });
-
   /* useEffects */
 
   useEffect(() => {

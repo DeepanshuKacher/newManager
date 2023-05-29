@@ -1,0 +1,35 @@
+.upperMarkdownDiv {
+  text-align: center;
+}
+.upperMarkdownDiv > h1 {
+  font-size: larger;
+}
+.upperMarkdownDiv > h2 {
+  font-size: large;
+}
+.upperMarkdownDiv > h3 {
+  font-size: medium;
+}
+.upperMarkdownDiv > h4 {
+  font-size: smaller;
+}
+.upperMarkdownDiv > h5 {
+  font-size: small;
+}
+.upperMarkdownDiv > h6 {
+  font-size: x-small;
+}
+.upperMarkdownDiv > p {
+  font-size: small;
+}
+.marzinZero * {
+  margin: 0;
+}
+.infoDivPara {
+  /* display: block; */
+  margin: 0;
+  padding: 0;
+  /* box-sizing: border-box; */
+  font-size: small;
+  font-weight: bold;
+}

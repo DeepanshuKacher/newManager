@@ -22,6 +22,7 @@ import {
 } from "../../pages/realtime/table_status/redux";
 import { updateBillingTable } from "../../pages/realtime/table_status/[table_name]/redux";
 import { updateSelfInfo } from "./selfInfo";
+import { changeOrderModalShowState } from "./orderModal";
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -43,4 +44,5 @@ export const actionTypes = {
   orderCompleted,
   orderRemove,
   updateSelfInfo,
+  changeOrderModalShowState,
 };

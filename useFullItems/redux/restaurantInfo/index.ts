@@ -6,13 +6,15 @@ export interface Dish {
   description: string;
   imageUrl: string;
   // addOns: { id: string; name: string; price: number; dishId: string }[];
-  FullLarge_Price: number;
-  FullMedium_Price: number;
-  FullSmall_Price: number;
-  HalfLarge_Price: number;
-  HalfMedium_Price: number;
-  HalfSmall_Price: number;
   available: boolean;
+  price: {
+    large?: {
+      half?: number;
+      full?: number;
+    };
+    medium?: { half?: number; full?: number };
+    small?: { half?: number; full?: number };
+  };
 }
 export interface Table {
   id: string;
@@ -67,7 +69,7 @@ const initialState: InitialDataTypes = {
   },
 };
 
-export type WaiterType = typeof initialState.defaultValues.waiters[0];
+export type WaiterType = (typeof initialState.defaultValues.waiters)[0];
 
 export type RestaurantSliceType = typeof initialState.defaultValues;
 

@@ -7,9 +7,9 @@ export interface Order {
   tableSectionId: string;
   user_description?: string;
   orderedBy: string;
-  size: "Large" | "Medium" | "Small";
-  fullQuantity?: number;
-  halfQuantity?: number;
+  size: "large" | "medium" | "small";
+  fullQuantity?: string;
+  halfQuantity?: string;
   chefAssign?: string;
   completed?: string;
   createdAt: string;
@@ -33,7 +33,7 @@ const orderContainer = createSlice({
   reducers: {
     storeDishOrders: (state, action: PayloadAction<Order[]>) => {
       state.orders = action.payload;
-      for (let x of state.orders) {
+      for (let x of state?.orders) {
         state.noRepeatContainer[x.orderId] = x;
       }
 

@@ -1,7 +1,7 @@
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import { useAppSelector } from "../../../../useFullItems/redux";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   axiosDeleteFunction,
   axiosGetFunction,
@@ -13,6 +13,9 @@ import { OrderDetailModal } from "../../../../components/pagesComponents/realtim
 import { DishModal } from "../../../../components/pagesComponents/customize_restaurant/dishes/dishname/DishModal";
 import { Dish } from "../../../../interfaces";
 import Modal from "react-bootstrap/Modal";
+import ReactToPrint from "react-to-print";
+
+import TemplateToPrint from "../../../../components/pagesComponents/customize_restaurant/template/TemplateToPrint";
 
 function DeleteConformationModal({
   dishName,
@@ -55,8 +58,31 @@ function DeleteConformationModal({
   );
 }
 
+enum OperationType {
+  Plus = "Plus",
+  Minus = "Minus",
+  Multiply = "Multiply",
+  Divide = "Divide",
+  Percentage = "Percentage",
+}
+
+enum GainLoss {
+  gain = "gain",
+  loss = "loss",
+}
+
+type Operations = {
+  label: string;
+  number: number;
+  operation: OperationType;
+  gainLoss: GainLoss;
+};
+
 function TableSession() {
   /* initialization */
+
+  const componentRef = useRef<any>();
+
   const router = useRouter();
 
   /* states and store */
@@ -67,6 +93,10 @@ function TableSession() {
   const [deleteItemName, setDeleteItemName] = useState("");
   const [deleteItemPrice, setDeleteItemPrice] = useState<number>();
   const [deleteItemOrderId, setDeleteItemOrderId] = useState("");
+
+  /* Temp items */
+  const [operationsArray, setOperationArray] = useState<Operations[]>([]);
+  const [upperMarkDown, setUpperMarkDown] = useState("");
 
   const { billingTable } = useAppSelector((store) => store);
 
@@ -90,6 +120,19 @@ function TableSession() {
   useEffect(() => {
     if (billingTable.tableSectionId === undefined)
       router.push("/realtime/table_status");
+  }, []);
+
+  useEffect(() => {
+    axiosGetFunction({
+      parentUrl: "templates",
+      thenFunction: (e: {
+        operations: Operations[];
+        upperSectionText: string;
+      }) => {
+        setUpperMarkDown(e.upperSectionText);
+        setOperationArray(e.operations);
+      },
+    });
   }, []);
 
   // useEffect(() => {
@@ -148,13 +191,18 @@ function TableSession() {
     return totalPrice;
   };
 
-  // console.log({ tableOrders });
   return (
     <>
+      <TemplateToPrint
+        ref={componentRef}
+        upperMarkDown={upperMarkDown}
+        operationsArray={operationsArray}
+      />
       {orderDetail && (
         <OrderDetailModal
           orderDetail={orderDetail}
           toggleOrderDetailModal={disableOrderModal}
+          refreshFunction={getData}
         />
       )}
       {deleteItemName && deleteItemOrderId && (
@@ -217,6 +265,24 @@ function TableSession() {
               >
                 Clear Table
               </Button>
+              <ReactToPrint
+                trigger={() => (
+                  <Button
+                    variant="success"
+                    size="sm"
+                    style={{
+                      position: "absolute",
+                      right: 250,
+                      top: "50%",
+                      translate: "0 -50%",
+                    }}
+                    // onClick={() => alert("prient recepit")}
+                  >
+                    Print Receipt
+                  </Button>
+                )}
+                content={() => componentRef.current}
+              />
             </th>
           </tr>
           <tr>

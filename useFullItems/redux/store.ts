@@ -8,6 +8,7 @@ import orderContainer from "../../pages/realtime/orders/redux";
 import tableOrders from "../../pages/realtime/table_status/redux";
 import billingTable from "../../pages/realtime/table_status/[table_name]/redux";
 import selfInfo from "./selfInfo";
+import orderModal from "./orderModal";
 
 const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ const store = configureStore({
     tableStatus: tableOrders,
     billingTable,
     selfInfo,
+    orderModal,
   },
 });
 

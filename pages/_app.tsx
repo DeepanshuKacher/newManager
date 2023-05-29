@@ -14,6 +14,7 @@ import { GlobalAlert } from "../components/Common/GlobalAlert";
 import mqtt, { MqttClient } from "mqtt";
 import { mqttFunction } from "../useFullItems/mqtt";
 import { mqttConnection } from "../useFullItems/mqtt/client";
+import { DishOrderModal } from "../components/DishOrderModal";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -88,6 +89,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <Provider store={store}>
           <GlobalAlert />
           <GlobalLoader />
+          <DishOrderModal />
           <Component {...pageProps} />
         </Provider>
       </SSRProvider>

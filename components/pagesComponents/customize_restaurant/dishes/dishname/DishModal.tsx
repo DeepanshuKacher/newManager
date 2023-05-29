@@ -198,13 +198,13 @@ export const DishModal = (props: Props) => {
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.FullLarge_Price}
+                      defaultValue={dishInfo?.price.large.full}
                     />
                   </td>
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.HalfLarge_Price}
+                      defaultValue={dishInfo?.price.large.half}
                     />
                   </td>
                 </tr>
@@ -213,13 +213,13 @@ export const DishModal = (props: Props) => {
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.FullMedium_Price}
+                      defaultValue={dishInfo?.price.medium.full}
                     />
                   </td>
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.HalfMedium_Price}
+                      defaultValue={dishInfo?.price.medium.half}
                     />
                   </td>
                 </tr>
@@ -228,13 +228,13 @@ export const DishModal = (props: Props) => {
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.FullSmall_Price}
+                      defaultValue={dishInfo?.price.small.full}
                     />
                   </td>
                   <td>
                     <TableInput
                       editMode={editMode}
-                      defaultValue={dishInfo?.HalfSmall_Price}
+                      defaultValue={dishInfo?.price.small.half}
                     />
                   </td>
                 </tr>

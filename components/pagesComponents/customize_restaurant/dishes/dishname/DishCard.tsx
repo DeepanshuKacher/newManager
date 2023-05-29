@@ -20,6 +20,11 @@ interface Props {
   dishInfo: Dish;
 }
 
+const DishPrice = (price: number | undefined) => {
+  if (price) return <td>₹{price}</td>;
+  else return <td>Nil</td>;
+};
+
 export const DishCard = (props: Props) => {
   const { dishInfo, openViewModel } = props;
   return (
@@ -42,29 +47,28 @@ export const DishCard = (props: Props) => {
               </tr>
             </thead>
             <tbody>
-              {(dishInfo.FullLarge_Price || dishInfo.HalfLarge_Price) && (
+              {dishInfo.price.large ? (
                 <tr>
                   <td>Large</td>
-                  <td>₹{dishInfo.FullLarge_Price}</td>
-                  <td>₹{dishInfo.HalfLarge_Price}</td>
+                  {DishPrice(dishInfo.price.large.full)}
+                  {DishPrice(dishInfo.price.large.half)}
                 </tr>
-              )}
-              {(dishInfo.FullMedium_Price > 0 ||
-                dishInfo.HalfMedium_Price > 0) && (
+              ) : null}
+
+              {dishInfo.price.medium ? (
                 <tr>
                   <td>Medium</td>
-                  <td>₹{dishInfo.FullMedium_Price}</td>
-                  <td>₹{dishInfo.HalfMedium_Price}</td>
+                  {DishPrice(dishInfo.price.medium.full)}
+                  {DishPrice(dishInfo.price.medium.half)}
                 </tr>
-              )}
-              {(dishInfo.FullSmall_Price > 0 ||
-                dishInfo.HalfSmall_Price > 0) && (
+              ) : null}
+              {dishInfo.price.small ? (
                 <tr>
                   <td>Small</td>
-                  <td>₹{dishInfo.FullSmall_Price}</td>
-                  <td>₹{dishInfo.HalfSmall_Price}</td>
+                  {DishPrice(dishInfo.price.small.full)}
+                  {DishPrice(dishInfo.price.small.half)}
                 </tr>
-              )}
+              ) : null}
             </tbody>
           </Table>
           {/* {dishInfo.addOns.length > 0 && (

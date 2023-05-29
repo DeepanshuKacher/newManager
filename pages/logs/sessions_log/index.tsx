@@ -1,9 +1,9 @@
 import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
 
-import { useAxiosGet } from "../../useFullItems/hooks";
-import { SessionLog } from "../../interfaces";
-import { useAppSelector } from "../../useFullItems/redux";
+import { useAxiosGet } from "../../../useFullItems/hooks";
+import { SessionLog } from "../../../interfaces";
+import { useAppSelector } from "../../../useFullItems/redux";
 import { useState } from "react";
 
 interface OrderModalProps {

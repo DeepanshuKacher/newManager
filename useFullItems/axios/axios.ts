@@ -31,9 +31,11 @@ export const controllerUrls = {
   restaurantSetting: "restaurant-setting",
   revenueAnalysis: "analysis/revenue",
   dishAnalysis: "analysis/dish",
+  kot: "kot",
+  templates: "templates",
 } as const;
 
 type KeysOfUrls = keyof typeof controllerUrls;
-export type ControllerURLS = typeof controllerUrls[KeysOfUrls];
+export type ControllerURLS = (typeof controllerUrls)[KeysOfUrls];
 
 export { axios };
