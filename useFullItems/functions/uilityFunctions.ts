@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Order } from "../../pages/realtime/orders/redux";
 import { Dish } from "../redux/restaurantInfo";
 import dateFormatter from "dayjs";
+import { store } from "../redux";
 
 export const concatString = (...args: string[]) =>
   args.reduce(
@@ -34,6 +35,18 @@ export const calculatePrice = (order: Order, dish?: Dish) => {
   returnPrice +=
     (convertNumberStringToInt(halfQuantity) || 0) *
     (dish?.price?.[order.size]?.half || 0);
+
+  return returnPrice;
+};
+
+export const calculatePriceForOrder = (orders: Order[]) => {
+  const { dishObj } = store.getState().restaurantInfo.defaultValues;
+
+  let returnPrice = 0;
+
+  for (let x of orders) {
+    returnPrice += calculatePrice(x, dishObj[x.dishId]);
+  }
 
   return returnPrice;
 };

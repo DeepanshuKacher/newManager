@@ -197,6 +197,10 @@ function TableSession() {
         ref={componentRef}
         upperMarkDown={upperMarkDown}
         operationsArray={operationsArray}
+        orders={tableOrders}
+        prefix={selectedTableSection?.prefix}
+        suffix={selectedTableSection?.suffix}
+        tableNumber={billingTable?.tableNumber || 0}
       />
       {orderDetail && (
         <OrderDetailModal

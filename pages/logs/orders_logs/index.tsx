@@ -146,8 +146,14 @@ function OrderLogs() {
                   {orderDetail?.tableNumber}
                   {tableInfo?.suffix}
                 </td>
-                <td onClick={() => window.print()}>
-                  <img width={21} src="/icons/print.svg/" alt="print icon" />
+                <td
+                //  onClick={() => window.print()}
+                >
+                  <img
+                    style={{ width: 24 }}
+                    src="/icons/print.svg/"
+                    alt="print icon"
+                  />
                 </td>
                 {/* <td>
                   {session.Order_Logs.reduce((acc, item) => acc + item.cost, 0)}

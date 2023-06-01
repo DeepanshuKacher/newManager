@@ -53,6 +53,7 @@ export interface InitialDataTypes {
     dishesh: Dish[];
     chefs: Chef[];
     settings: { allowWaiterToClearSession: boolean };
+    dishObj: { [x: string]: Dish };
   };
 }
 
@@ -66,6 +67,7 @@ const initialState: InitialDataTypes = {
     dishesh: [],
     chefs: [],
     settings: { allowWaiterToClearSession: false },
+    dishObj: {},
   },
 };
 
@@ -82,6 +84,14 @@ const restaurantInfoSlice = createSlice({
       action: PayloadAction<RestaurantSliceType>
     ) => {
       state.defaultValues = action.payload;
+
+      const tempStore: InitialDataTypes["defaultValues"]["dishObj"] = {};
+
+      for (const x of state.defaultValues.dishesh) {
+        tempStore[x.id] = x;
+      }
+
+      state.defaultValues.dishObj = tempStore;
     },
   },
 });

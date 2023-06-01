@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -48,8 +48,9 @@ const Template = () => {
         operations: Operations[];
         upperSectionText: string;
       }) => {
-        setUpperMarkDown(e.upperSectionText);
-        setOperationArray(e.operations);
+        const upperSectionValue = e?.upperSectionText || "";
+        setUpperMarkDown(upperSectionValue);
+        setOperationArray(e?.operations);
       },
     });
   }, []);
@@ -97,6 +98,9 @@ const Template = () => {
               ref={ref}
               upperMarkDown={upperMarkDown}
               operationsArray={operationsArray}
+              prefix="A"
+              suffix="S"
+              tableNumber={10}
             />
           </Col>
           <Col>
