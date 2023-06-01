@@ -82,6 +82,7 @@ export const fetchAndStoreRestaurantAndSelfDetail = async () => {
           settings: data.settings,
           tables,
           waiters: data.waiters,
+          dishObj: {},
         })
       );
 
