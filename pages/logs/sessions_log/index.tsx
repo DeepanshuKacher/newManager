@@ -17,7 +17,7 @@ const OrderLogModal = (props: OrderModalProps) => {
     (store) => store.restaurantInfo.defaultValues
   );
 
-  const tableInfo = tables.find((table) => table.id === data?.tableId);
+  const tableInfo = tables?.find((table) => table.id === data?.tableId);
 
   return (
     <Modal show={!!data} onHide={handleClose}>
@@ -88,7 +88,7 @@ function Sessions() {
         </thead>
         <tbody>
           {sessionLogs.map((session) => {
-            const tableInfo = tables.find(
+            const tableInfo = tables?.find(
               (table) => table.id === session.tableId
             );
             return (

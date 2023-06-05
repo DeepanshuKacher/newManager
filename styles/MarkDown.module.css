@@ -33,3 +33,21 @@
   font-size: small;
   font-weight: bold;
 }
+
+.prientableDiv {
+  /* display: none; */
+  /* background-color: red; */
+  /* display: flex; */
+  display: block;
+}
+
+/* .prientableDiv * {
+  font-size: small;
+} */
+
+@media print {
+  .prientableDiv {
+    display: block;
+    height: fit-content;
+  }
+}

@@ -87,7 +87,7 @@ const restaurantInfoSlice = createSlice({
 
       const tempStore: InitialDataTypes["defaultValues"]["dishObj"] = {};
 
-      for (const x of state.defaultValues.dishesh) {
+      for (const x of state?.defaultValues?.dishesh || []) {
         tempStore[x.id] = x;
       }
 

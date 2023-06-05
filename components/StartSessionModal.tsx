@@ -20,7 +20,7 @@ export const StartSessionModal = (props: Props) => {
 
   const { handleClose, show, tableNumber, tableSectionId } = props;
 
-  const tableInfo = tables.find((table) => table.id === tableSectionId);
+  const tableInfo = tables?.find((table) => table.id === tableSectionId);
 
   const startSessionFunction = () => {
     setLoading(true);

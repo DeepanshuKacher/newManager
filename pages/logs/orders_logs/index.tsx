@@ -25,7 +25,7 @@ const OrderLogModal = (props: OrderModalProps) => {
 
   const orderInfo: Order | undefined = noRepeatContainer[data?.[0] || ""];
 
-  const tableInfo = tables.find(
+  const tableInfo = tables?.find(
     (table) => table.id === orderInfo?.tableSectionId
   );
 
@@ -133,7 +133,7 @@ function OrderLogs() {
         <tbody>
           {kot.map((orderArray, index) => {
             const orderDetail = noRepeatContainer?.[orderArray?.[0]];
-            const tableInfo = tables.find(
+            const tableInfo = tables?.find(
               (table) => table.id === orderDetail?.tableSectionId
             );
             return (

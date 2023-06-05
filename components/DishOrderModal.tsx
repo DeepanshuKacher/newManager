@@ -219,7 +219,7 @@ function DishOrderModal(props: Props) {
                 // value={selectedOption}
                 placeholder="Select Dish"
                 onChange={(e) => selectDish(e?.value)}
-                options={dishesh.map((dish) => ({
+                options={dishesh?.map((dish) => ({
                   label: dish.name,
                   value: dish.id,
                 }))}
