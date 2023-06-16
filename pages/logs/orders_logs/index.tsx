@@ -19,28 +19,31 @@ const OrderLogModal = (props: OrderModalProps) => {
     (store) => store.restaurantInfo.defaultValues
   );
 
-  const noRepeatContainer = useAppSelector(
-    (store) => store.orderContainer.noRepeatContainer
-  );
+  // const noRepeatContainer = useAppSelector(
+  //   (store) => store.orderContainer.noRepeatContainer
+  // );
 
-  const orderInfo: Order | undefined = noRepeatContainer[data?.[0] || ""];
+  // const orderInfo: Order | undefined = noRepeatContainer[data?.[0] || ""];
 
-  const tableInfo = tables?.find(
-    (table) => table.id === orderInfo?.tableSectionId
-  );
+  // const tableInfo = tables?.find(
+  //   (table) => table.id === orderInfo?.tableSectionId
+  // );
 
   return (
     <Modal show={!!data} onHide={handleClose}>
       <Modal.Header>
         <Modal.Title>
-          {tableInfo?.prefix}
+          {/* {tableInfo?.prefix}
           {orderInfo?.tableNumber}
-          {tableInfo?.suffix}
+          {tableInfo?.suffix} */}
         </Modal.Title>
-        <Modal.Title>{formatDate(orderInfo?.createdAt)}</Modal.Title>
+        <Modal.Title>
+          Hello
+          {/* {formatDate(orderInfo?.createdAt)} */}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Table striped bordered>
+    {/*     <Table striped bordered>
           <tbody>
             {data?.map((orderUUID, index) => {
               const currentOrderInfo = noRepeatContainer[orderUUID];
@@ -62,7 +65,7 @@ const OrderLogModal = (props: OrderModalProps) => {
               );
             })}
           </tbody>
-        </Table>
+        </Table> */}
       </Modal.Body>
     </Modal>
   );
@@ -72,9 +75,9 @@ function OrderLogs() {
   const [showSessionDetail, setSessionDetail] = useState<SessionLog>();
   const [selectedKot, setSelectKot] = useState<string[]>();
   const [kot, setKot] = useState<string[][]>([[]]);
-  const noRepeatContainer = useAppSelector(
-    (store) => store.orderContainer.noRepeatContainer
-  );
+  // const noRepeatContainer = useAppSelector(
+  //   (store) => store.orderContainer.noRepeatContainer
+  // );
 
   const { tables } = useAppSelector(
     (store) => store.restaurantInfo.defaultValues
@@ -132,20 +135,20 @@ function OrderLogs() {
         </thead>
         <tbody>
           {kot.map((orderArray, index) => {
-            const orderDetail = noRepeatContainer?.[orderArray?.[0]];
-            const tableInfo = tables?.find(
-              (table) => table.id === orderDetail?.tableSectionId
-            );
+            // const orderDetail = noRepeatContainer?.[orderArray?.[0]];
+            // const tableInfo = tables?.find(
+            //   (table) => table.id === orderDetail?.tableSectionId
+            // );
             return (
               <tr key={orderArray?.[0] ?? 0}>
-                <td onClick={() => setSelectKot(orderArray)}>
+      {/*           <td onClick={() => setSelectKot(orderArray)}>
                   {formatDate(orderDetail?.createdAt)}
                 </td>
                 <td onClick={() => setSelectKot(orderArray)}>
                   {tableInfo?.prefix}
                   {orderDetail?.tableNumber}
                   {tableInfo?.suffix}
-                </td>
+                </td> */}
                 <td
                 //  onClick={() => window.print()}
                 >
