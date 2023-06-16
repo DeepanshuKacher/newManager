@@ -26,6 +26,10 @@ export const OrderDetailModal = (props: Props) => {
   const { toggleOrderDetailModal, orderDetail, refreshFunction } = props;
 
   const [updateQuantityMode, setUpdateQuantityMode] = useState(false);
+
+  const allDishesh = useAppSelector(
+    (store) => store.restaurantInfo.defaultValues.dishesh
+  );
   // const [newFullQuantity, setNewFullQuantity] = useState(
   //   parseInt(orderDetail?.value.)
   // );
@@ -128,9 +132,9 @@ export const OrderDetailModal = (props: Props) => {
             </thead>
             <tbody>
               {orderDetail?.value.orders.map((order) => {
-                const selectedDish = useAppSelector(
-                  (store) => store.restaurantInfo.defaultValues.dishesh
-                ).find((dish) => dish.id === order.dishId);
+                const selectedDish = allDishesh.find(
+                  (dish) => dish.id === order.dishId
+                );
 
                 return (
                   <tr key={order.orderId}>
