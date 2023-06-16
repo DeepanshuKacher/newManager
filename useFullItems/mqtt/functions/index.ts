@@ -1,4 +1,5 @@
 import { Order, cartToOrder } from "../../../pages/realtime/orders/redux";
+import { Kot } from "../../functions/onLoad/fetchAndStoreFunctions";
 import { store, actionTypes } from "../../redux";
 
 export const updateTableStatus = ({
@@ -19,13 +20,8 @@ export const updateTableStatus = ({
   );
 };
 
-export const pushInOrderContainer = ({
-  order,
-  orderNo,
-}: {
-  order: Order;
-  orderNo: number;
-}) => store.dispatch(actionTypes.unshiftInOrderContainer({ order, orderNo }));
+export const pushInOrderContainer = (kot: Kot) =>
+  store.dispatch(actionTypes.unshiftInOrderContainer(kot));
 
 export const convertCartToOrder = ({
   orderArray,
@@ -43,7 +39,7 @@ const orderStatusUpdation = {
   Remove: "Remove",
 };
 export const updateOrderStatus = (payload: {
-  orderId: string;
+  orderId: Kot["id"];
   orderStatus: keyof typeof orderStatusUpdation;
   chefId: string;
 }) => {

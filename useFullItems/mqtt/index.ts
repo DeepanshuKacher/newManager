@@ -1,4 +1,6 @@
 import { Order } from "../../pages/realtime/orders/redux";
+import { constants } from "../constants";
+import { Kot } from "../functions/onLoad/fetchAndStoreFunctions";
 import {
   updateTableStatus,
   pushInOrderContainer,
@@ -28,11 +30,9 @@ export const mqttFunction = (props: Props) => {
       break;
 
     case "dishOrder":
-      const dishOrdeData: {
-        order: Order;
-        orderNo: number;
-      } = message;
-      pushInOrderContainer(dishOrdeData);
+      const kot: Kot = message;
+      if (constants.IS_DEVELOPMENT) console.log(kot);
+      pushInOrderContainer(kot);
       break;
 
     case "cardDishOrder":

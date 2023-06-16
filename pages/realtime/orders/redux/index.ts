@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Kot } from "../../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
 
 export interface Order {
   dishId: string;
@@ -16,51 +17,45 @@ export interface Order {
 }
 
 interface InitialDataTypes {
-  orders: Order[];
-  noRepeatContainer: { [orderId: Order["orderId"]]: Order };
-  totalTodayOrder: number;
+  orders: Kot[];
+  // noRepeatContainer: { [orderId: Order["orderId"]]: Order };
+  // totalTodayOrder: number;
 }
 
 const initialState: InitialDataTypes = {
   orders: [],
-  noRepeatContainer: {},
-  totalTodayOrder: 0,
+  // noRepeatContainer: {},
+  // totalTodayOrder: 0,
 };
 
 const orderContainer = createSlice({
   name: "orderContainer",
   initialState,
   reducers: {
-    storeDishOrders: (state, action: PayloadAction<Order[]>) => {
+    storeDishOrders: (state, action: PayloadAction<Kot[]>) => {
       state.orders = action.payload;
-      for (let x of state?.orders) {
-        state.noRepeatContainer[x.orderId] = x;
-      }
+      // for (let x of state?.orders) {
+      //   state.noRepeatContainer[x.orderId] = x;
+      // }
 
-      const todaysDate = new Date().getDate();
+      // const todaysDate = new Date().getDate();
 
-      state.totalTodayOrder = state.orders.reduce((acc, currentValue) => {
-        if (new Date(currentValue.createdAt).getDate() === todaysDate)
-          return acc + 1;
-        else return acc;
-      }, 0);
+      // state.totalTodayOrder = state.orders.reduce((acc, currentValue) => {
+      //   if (new Date(currentValue.createdAt).getDate() === todaysDate)
+      //     return acc + 1;
+      //   else return acc;
+      // }, 0);
     },
-    unshiftInOrderContainer: (
-      state,
-      action: PayloadAction<{
-        order: Order;
-        orderNo: number;
-      }>
-    ) => {
-      const { order, orderNo } = action.payload;
-      if (state.noRepeatContainer[order.orderId] === undefined) {
-        state.orders.push(order);
-        state.totalTodayOrder++;
-      }
-
-      if (state.totalTodayOrder !== orderNo) {
-        alert("Please reload for fresh content");
-      }
+    unshiftInOrderContainer: (state, action: PayloadAction<Kot>) => {
+      // const { order, orderNo } = action.payload;
+      // if (state.noRepeatContainer[order.orderId] === undefined) {
+      //   state.orders.push(order);
+      //   state.totalTodayOrder++;
+      // }
+      // if (state.totalTodayOrder !== orderNo) {
+      //   alert("Please reload for fresh content");
+      // }
+      state.orders.push(action.payload);
     },
     cartToOrder: (
       state,
@@ -69,17 +64,15 @@ const orderContainer = createSlice({
         orderNo: number;
       }>
     ) => {
-      const { orderArray, orderNo } = action.payload;
-      const newOrderArray = orderArray.filter(
-        (order) => state.noRepeatContainer[order.orderId] === undefined
-      );
-      state.orders.push(...newOrderArray);
-
-      state.totalTodayOrder += newOrderArray.length;
-
-      if (state.totalTodayOrder !== orderNo) {
-        alert("Please reload for fresh content");
-      }
+      // const { orderArray, orderNo } = action.payload;
+      // const newOrderArray = orderArray.filter(
+      //   (order) => state.noRepeatContainer[order.orderId] === undefined
+      // );
+      // state.orders.push(...newOrderArray);
+      // state.totalTodayOrder += newOrderArray.length;
+      // if (state.totalTodayOrder !== orderNo) {
+      //   alert("Please reload for fresh content");
+      // }
     },
     orderAccepted: (
       state,
@@ -90,30 +83,30 @@ const orderContainer = createSlice({
     ) => {
       const orders = [...state.orders];
       const selectedOrder = orders.findIndex(
-        (item) => item.orderId === action.payload.orderId
+        (item) => item.id === action.payload.orderId
       );
 
-      orders[selectedOrder].chefAssign = action.payload.chefId;
+      orders[selectedOrder].value.chefAssign = action.payload.chefId;
 
       state.orders = orders;
     },
-    orderCompleted: (state, action: PayloadAction<Order["orderId"]>) => {
+    orderCompleted: (state, action: PayloadAction<Kot["id"]>) => {
       const orders = [...state.orders];
       const selectedOrder = orders.findIndex(
-        (item) => item.orderId === action.payload
+        (item) => item.id === action.payload
       );
 
-      orders[selectedOrder].completed = "Completed";
+      orders[selectedOrder].value.completed = 1;
 
       state.orders = orders;
     },
     orderRemove: (state, action: PayloadAction<Order["orderId"]>) => {
       const orders = [...state.orders];
       const selectedOrder = orders.findIndex(
-        (item) => item.orderId === action.payload
+        (item) => item.id === action.payload
       );
 
-      orders[selectedOrder].chefAssign = undefined;
+      orders[selectedOrder].value.chefAssign = "";
 
       state.orders = orders;
     },

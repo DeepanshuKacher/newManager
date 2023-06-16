@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useAppSelector } from "../../../useFullItems/redux";
 import { OrderDetailModal } from "../../../components/pagesComponents/realtime/orders/DetailModal";
 import { Order } from "./redux";
+import { Kot } from "../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
 
 function Orders() {
-  const [orderDetailModal, setOrderDetailModal] = useState<null | Order>(null);
+  const [orderDetailModal, setOrderDetailModal] = useState<null | Kot>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -45,7 +46,7 @@ function Orders() {
           <tr className="table-primary">
             <th scope="col">#</th>
             <th scope="col">Order Time</th>
-            <th scope="col">Food</th>
+            {/* <th scope="col">Food</th> */}
             <th scope="col">Table No.</th>
             <th scope="col">Ordered by</th>
             <th scope="col">Chef Assign</th>
@@ -59,45 +60,47 @@ function Orders() {
           </tr>
         </thead>
         <tbody>
-          {orders.map((item: Order | undefined, index) => {
+          {orders?.map((kot, index) => {
             const tableSection = tables.find(
-              (table) => table.id === item?.tableSectionId
+              (table) => table?.id === kot?.value?.tableSectionId
             );
             return (
               <tr
                 className={`${
-                  item?.chefAssign && item?.completed
+                  kot.value.chefAssign && kot.value.completed
                     ? ""
-                    : item?.chefAssign
+                    : kot.value.chefAssign
                     ? "bg-success"
                     : "bg-warning"
                 }`}
-                key={item?.orderId}
+                key={kot.id}
               >
                 <th scope="row">{index + 1}</th>
-                <td>{new Date(item?.createdAt || "").toLocaleTimeString()}</td>
                 <td>
-                  {disheshData.find((dish) => dish.id === item?.dishId)?.name}
+                  {new Date(kot.value.createdAt || "").toLocaleTimeString()}
                 </td>
+                {/* <td>
+                  {disheshData.find((dish) => dish.id === item?.dishId)?.name}
+                </td> */}
                 <td>
                   {tableSection?.prefix}
-                  {item?.tableNumber}
+                  {kot.value.tableNumber}
                   {tableSection?.suffix}
                 </td>
                 <td>
-                  {waiters.find((waiter) => waiter.id === item?.orderedBy)
+                  {waiters.find((waiter) => waiter.id === kot?.value.orderedBy)
                     ?.name || "self"}
                 </td>
                 <td>
-                  {chefs.find((chef) => chef.id === item?.chefAssign)?.name ||
-                    ""}
+                  {chefs.find((chef) => chef.id === kot?.value?.chefAssign)
+                    ?.name || ""}
                 </td>
                 {/* <td>waiter assign</td> */}
                 <td
                   style={{
                     cursor: "pointer",
                   }}
-                  onClick={() => setOrderDetailModal(item || null)}
+                  onClick={() => setOrderDetailModal(kot || null)}
                 >
                   <img src="/icons/edit.svg" alt="edit icon" />
                 </td>

@@ -8,10 +8,15 @@ import { Order } from "../../../../pages/realtime/orders/redux";
 import { useAppSelector } from "../../../../useFullItems/redux";
 import { axiosPatchFunction } from "../../../../useFullItems/axios";
 import { useRouter } from "next/router";
+import {
+  JsonOrder,
+  Kot,
+} from "../../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
+import Table from "react-bootstrap/Table";
 
 interface Props {
   toggleOrderDetailModal: () => void;
-  orderDetail: Order | null;
+  orderDetail: Kot | null;
   refreshFunction?: any;
 }
 
@@ -21,18 +26,12 @@ export const OrderDetailModal = (props: Props) => {
   const { toggleOrderDetailModal, orderDetail, refreshFunction } = props;
 
   const [updateQuantityMode, setUpdateQuantityMode] = useState(false);
-  const [newFullQuantity, setNewFullQuantity] = useState(
-    parseInt(orderDetail?.fullQuantity!)
-  );
-  const [newHalfQuantity, setNewHalfQuantity] = useState(
-    parseInt(orderDetail?.halfQuantity!)
-  );
-
-  console.log({ orderDetail });
-
-  const selectedDish = useAppSelector(
-    (store) => store.restaurantInfo.defaultValues.dishesh
-  ).find((dish) => dish.id === orderDetail?.dishId);
+  // const [newFullQuantity, setNewFullQuantity] = useState(
+  //   parseInt(orderDetail?.value.)
+  // );
+  // const [newHalfQuantity, setNewHalfQuantity] = useState(
+  //   parseInt(orderDetail?.halfQuantity!)
+  // );
 
   const updateQuantityState = (
     plusOrMinus: "+" | "-",
@@ -84,15 +83,15 @@ export const OrderDetailModal = (props: Props) => {
   //   }
   // };
 
-  const updateQuantity = () => {
+  const updateQuantity = (orderDetail: JsonOrder) => {
     if (orderDetail?.orderId)
       axiosPatchFunction({
         parentUrl: "orders",
         childUrl: "update",
         data: {
           orderId: orderDetail?.orderId,
-          halfQuantity: newHalfQuantity,
-          fullQuantity: newFullQuantity,
+          // halfQuantity: newHalfQuantity,
+          // fullQuantity: newFullQuantity,
         },
         thenFunction: () => {
           refreshFunction();
@@ -106,7 +105,7 @@ export const OrderDetailModal = (props: Props) => {
       {router.pathname === "/realtime/table_status/[table_name]" && (
         <Modal.Header>
           {updateQuantityMode ? (
-            <Button variant="success" onClick={updateQuantity}>
+            <Button variant="success" /* onClick={()=>updateQuantity()} */>
               Save
             </Button>
           ) : (
@@ -118,95 +117,120 @@ export const OrderDetailModal = (props: Props) => {
       )}
       <Modal.Body>
         <Container fluid className="text-center">
-          <Modal.Title as="h1">{selectedDish?.name}</Modal.Title>
-          <Row className="my-3">
-            <Col xs={12} style={{ fontSize: 20 }}>
-              {orderDetail?.size}
-            </Col>
-            <Col xs={6}>Half</Col>
-            <Col xs={6}>Full</Col>
-            {orderDetail?.halfQuantity && (
-              <Col xs={6}>
-                {updateQuantityMode && parseInt(orderDetail?.halfQuantity) ? (
-                  <Button
-                    onClick={() =>
-                      updateQuantityState(
-                        "+",
-                        newHalfQuantity,
-                        setNewHalfQuantity
-                      )
-                    }
-                  >
-                    +
-                  </Button>
-                ) : null}{" "}
-                {newHalfQuantity}{" "}
-                {updateQuantityMode && parseInt(orderDetail?.halfQuantity) ? (
-                  <Button
-                    onClick={() =>
-                      updateQuantityState(
-                        "-",
-                        newHalfQuantity,
-                        setNewHalfQuantity
-                      )
-                    }
-                  >
-                    -
-                  </Button>
-                ) : null}
-              </Col>
-            )}
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Dish</th>
+                <th>Size</th>
+                <th>Half</th>
+                <th>Full</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orderDetail?.value.orders.map((order) => {
+                const selectedDish = useAppSelector(
+                  (store) => store.restaurantInfo.defaultValues.dishesh
+                ).find((dish) => dish.id === order.dishId);
 
-            {orderDetail?.fullQuantity && (
-              <Col xs={6}>
-                {updateQuantityMode && parseInt(orderDetail?.fullQuantity) ? (
-                  <Button
-                    onClick={() =>
-                      updateQuantityState(
-                        "+",
-                        newFullQuantity,
-                        setNewFullQuantity
-                      )
-                    }
-                  >
-                    +
-                  </Button>
-                ) : null}{" "}
-                {newFullQuantity}{" "}
-                {updateQuantityMode && parseInt(orderDetail?.fullQuantity) ? (
-                  <Button
-                    onClick={() =>
-                      updateQuantityState(
-                        "-",
-                        newFullQuantity,
-                        setNewFullQuantity
-                      )
-                    }
-                  >
-                    -
-                  </Button>
-                ) : null}
-              </Col>
-            )}
-          </Row>
-
-          {orderDetail?.user_description && (
-            <Row className="mb-3">
-              <Col className="d-flex flex-row">
-                <h5>Description :-</h5>
-                <p className="ms-2 text-muted">
-                  {orderDetail?.user_description}
-                </p>
-              </Col>
-            </Row>
-          )}
-          {/* <ListGroup> // this is for addons don't delete it
-            <ListGroup.Item>Extra-chilli</ListGroup.Item>
-            <ListGroup.Item>Extra-Panner</ListGroup.Item>
-            <ListGroup.Item>Extra-Lolipop</ListGroup.Item>
-          </ListGroup> */}
+                return (
+                  <tr key={order.orderId}>
+                    <td>{selectedDish?.name}</td>
+                    <td>{order.size}</td>
+                    <td>{order.halfQuantity}</td>
+                    <td>{order.fullQuantity}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
         </Container>
       </Modal.Body>
     </Modal>
   );
 };
+
+/*              <Modal.Title as="h1">{selectedDish?.name}</Modal.Title>
+                <Row className="my-3">
+                  <Col xs={12} style={{ fontSize: 20 }}>
+                    {order.size}
+                  </Col>
+                  <Col xs={6}>Half</Col>
+                  <Col xs={6}>Full</Col>
+                  {order.halfQuantity && (
+                    <Col xs={6}>
+                      {updateQuantityMode && parseInt(order.halfQuantity) ? (
+                        <Button
+                          onClick={() =>
+                            // updateQuantityState(
+                            //   "+",
+                            //   newHalfQuantity,
+                            //   setNewHalfQuantity
+                            // )
+                            alert("update half")
+                          }
+                        >
+                          +
+                        </Button>
+                      ) : null}
+                      {order.halfQuantity}
+                      {updateQuantityMode && parseInt(order?.halfQuantity) ? (
+                        <Button
+                          onClick={() =>
+                            // updateQuantityState(
+                            //   "-",
+                            //   newHalfQuantity,
+                            //   setNewHalfQuantity
+                            // )
+                            alert("update full quantity")
+                          }
+                        >
+                          -
+                        </Button>
+                      ) : null}
+                    </Col>
+                  )}
+
+                  {order?.fullQuantity && (
+                    <Col xs={6}>
+                      {updateQuantityMode && parseInt(order?.fullQuantity) ? (
+                        <Button
+                          onClick={() =>
+                            // updateQuantityState(
+                            //   "+",
+                            //   newFullQuantity,
+                            //   setNewFullQuantity
+                            // )
+                            alert("update full quantity")
+                          }
+                        >
+                          +
+                        </Button>
+                      ) : null}{" "}
+                      {order.fullQuantity}{" "}
+                      {updateQuantityMode && parseInt(order?.fullQuantity) ? (
+                        <Button
+                          onClick={() =>
+                            // updateQuantityState(
+                            //   "-",
+                            //   newFullQuantity,
+                            //   setNewFullQuantity
+                            // )
+                            alert("update full quantity")
+                          }
+                        >
+                          -
+                        </Button>
+                      ) : null}
+                    </Col>
+                  )}
+                </Row>
+                {order?.user_description && (
+                  <Row className="mb-3">
+                    <Col className="d-flex flex-row">
+                      <h5>Description :-</h5>
+                      <p className="ms-2 text-muted">
+                        {order?.user_description}
+                      </p>
+                    </Col>
+                  </Row>
+                )} */

@@ -16,6 +16,11 @@ import Modal from "react-bootstrap/Modal";
 import ReactToPrint from "react-to-print";
 
 import { TemplateToPrint } from "../../../../components/pagesComponents/customize_restaurant/template/TemplateToPrint";
+import {
+  JsonOrder,
+  Kot,
+} from "../../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
+import { constants } from "../../../../useFullItems/constants";
 
 function DeleteConformationModal({
   dishName,
@@ -87,8 +92,8 @@ function TableSession() {
 
   /* states and store */
 
-  const [tableOrders, setTableOrders] = useState<Order[]>([]);
-  const [orderDetail, setOrderDetail] = useState<Order>();
+  const [tableOrders, setTableOrders] = useState<Kot[]>([]);
+  const [orderDetail, setOrderDetail] = useState<Kot>();
   const [dishDetail, setDishDetail] = useState<Dish>();
   const [deleteItemName, setDeleteItemName] = useState("");
   const [deleteItemPrice, setDeleteItemPrice] = useState<number>();
@@ -148,7 +153,10 @@ function TableSession() {
       axiosGetFunction({
         parentUrl: "sessions",
         childUrl: sessionId,
-        thenFunction: setTableOrders,
+        thenFunction: (data: Kot[]) => {
+          if (constants.IS_DEVELOPMENT) console.log(data);
+          setTableOrders(data);
+        },
         useGlobalLoader: true,
       });
   };
@@ -184,11 +192,25 @@ function TableSession() {
 
   const totalPrice = () => {
     let totalPrice = 0;
+    // if (tableOrders?.value.orders.length)
     for (let x of tableOrders) {
-      const dish = dishesh.find((dish) => dish.id === x.dishId);
-      totalPrice += calculatePrice(x, dish);
+      for (let y of x.value.orders) {
+        const dish = dishesh.find((dish) => dish.id === y.dishId);
+        totalPrice += calculatePrice(y, dish);
+      }
     }
     return totalPrice;
+  };
+
+  const returnAllOrders = () => {
+    const returnArray: JsonOrder[] = [];
+
+    for (let x of tableOrders) {
+      for (let y of x.value.orders) {
+        returnArray.push(y);
+      }
+    }
+    return returnArray;
   };
 
   return (
@@ -197,7 +219,7 @@ function TableSession() {
         ref={componentRef}
         upperMarkDown={upperMarkDown}
         operationsArray={operationsArray}
-        orders={tableOrders}
+        orders={returnAllOrders()}
         prefix={selectedTableSection?.prefix}
         suffix={selectedTableSection?.suffix}
         tableNumber={billingTable?.tableNumber || 0}
@@ -298,36 +320,38 @@ function TableSession() {
         </thead>
         <tbody>
           {tableOrders?.map((item, index) => {
-            const dish = dishesh.find((dish) => dish.id === item.dishId);
-            const price = calculatePrice(item, dish);
+            return item.value.orders.map((order) => {
+              const dish = dishesh.find((dish) => dish.id === order.dishId);
+              const price = calculatePrice(order, dish);
 
-            return (
-              <tr key={item.orderId}>
-                <td>{index + 1}</td>
-                <td
-                  style={{ cursor: "pointer" }}
-                  onClick={() => setDishDetail(dish)}
-                >
-                  {dish?.name}
-                </td>
-                <td
-                  style={{ cursor: "pointer" }}
-                  onClick={() => setOrderDetail(item)}
-                >
-                  ₹{price}
-                </td>
-                <td
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    setDeleteItemName(dish?.name!);
-                    setDeleteItemOrderId(item.orderId);
-                    setDeleteItemPrice(price);
-                  }}
-                >
-                  Delete Item
-                </td>
-              </tr>
-            );
+              return (
+                <tr key={order.orderId}>
+                  <td>{index + 1}</td>
+                  <td
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setDishDetail(dish)}
+                  >
+                    {dish?.name}
+                  </td>
+                  <td
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setOrderDetail(item)}
+                  >
+                    ₹{price}
+                  </td>
+                  <td
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      setDeleteItemName(dish?.name!);
+                      setDeleteItemOrderId(order.orderId);
+                      setDeleteItemPrice(price);
+                    }}
+                  >
+                    Delete Item
+                  </td>
+                </tr>
+              );
+            });
           })}
 
           <tr>
