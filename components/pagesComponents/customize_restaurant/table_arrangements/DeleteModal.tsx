@@ -25,7 +25,8 @@ export function DeleteModal(props: Props) {
     axiosDeleteFunction({
       parentUrl: "tables",
       childUrl: deleteTableDetail.id,
-    }).then(() => handleClose());
+      thenFunction: () => handleClose(),
+    });
   };
 
   return (
