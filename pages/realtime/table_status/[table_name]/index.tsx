@@ -186,6 +186,7 @@ function TableSession() {
           tableSectionId: billingTable.tableSectionId,
           tableNumber: billingTable.tableNumber,
         },
+        useGlobalLoader: true,
         thenFunction: routerPushToTableStatusPage,
       });
   };

@@ -61,7 +61,7 @@ function Orders() {
         </thead>
         <tbody>
           {orders?.map((kot, index) => {
-            const tableSection = tables.find(
+            const tableSection = tables?.find(
               (table) => table?.id === kot?.value?.tableSectionId
             );
             return (
