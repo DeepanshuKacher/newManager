@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 /* import bootstrap */
 import Container from "react-bootstrap/Container";
@@ -13,6 +13,8 @@ import { WaiterType } from "../../../interfaces";
 import { DeleteModal } from "../../../components/pagesComponents/manage_staff/DeleteModal";
 import { EmployeeCard } from "../../../components/pagesComponents/manage_staff/EmployeeCard";
 import { AddManager } from "../../../components/pagesComponents/manage_staff/AddManagerModal";
+import { useGetManagerListQuery } from "../../../useFullItems/redux_toolkit_query";
+import { axiosGetFunction } from "../../../useFullItems/axios";
 
 /* import utility */
 
@@ -21,12 +23,28 @@ function Manager() {
   // const [dishModalMode, setDishModalMode] = useState<MODE>(false);  ---- edit & add mode
   const [employeeAddModal, setEmployeeAddModal] = useState(false);
   const [workerToDelete, setWorkerToDelete] = useState<WaiterType>();
+  const [listOfManager, setListOfManager] = useState<
+    {
+      firstName: string;
+      middleName: string;
+      lastName: string;
+    }[]
+  >([]);
 
   const chefs = useAppSelector(
     (store) => store.restaurantInfo.defaultValues.chefs
   );
 
+  // const {} = useGetManagerListQuery();
   /* useEffects */
+
+  useEffect(() => {
+    axiosGetFunction({
+      parentUrl: "manager",
+      useGlobalLoader: true,
+      thenFunction: setListOfManager,
+    });
+  }, []);
 
   /* functions */
 

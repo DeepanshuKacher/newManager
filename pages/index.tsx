@@ -47,9 +47,7 @@ function MainCard({
 function Index() {
   const router = useRouter();
 
-  const { data, loading, error } = useAxiosGet<{
-    restaurants: [{ name: string; city: string; id: string }];
-  }>({
+  const { data, loading, error } = useAxiosGet<any>({
     parentUrl: "restaurants",
     config: { withCredentials: true },
   });
@@ -57,7 +55,37 @@ function Index() {
   if (loading) return <Loader />;
   else if (error) return <h1>Error</h1>;
   else {
-    const restaurantList = data?.restaurants || [];
+    let typeData: {
+      restaurants: [{ name: string; city: string; id: string }];
+    } = data;
+
+    if (data.restaurant) {
+      /* : {
+        restaurant: { city: string; name: string; id: string };
+      } */
+      // typeData = data;
+
+      const temp: {
+        restaurant: {
+          city: string;
+          id: string;
+          name: string;
+        };
+      } = data;
+
+      typeData = {
+        restaurants: [
+          {
+            city: temp.restaurant.city,
+            id: temp.restaurant.id,
+            name: temp.restaurant.name,
+          },
+        ],
+      };
+    }
+
+    const restaurantList = typeData?.restaurants || [];
+
     return (
       <Container fluid>
         <Container>

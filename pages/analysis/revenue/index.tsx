@@ -11,7 +11,12 @@ function Revenue() {
   const [startingDate, setStartingDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [revenueDate, setRevenueDate] = useState<
-    { dateOfOrder: string; _sum: { cost: number } }[]
+    {
+      _sum: {
+        revenueGenerated: number;
+      };
+      date: string;
+    }[]
   >([]);
 
   const getData = () => {
@@ -39,12 +44,12 @@ function Revenue() {
           <LineChart
             data={{
               labels: revenueDate.map((data) =>
-                new Date(data.dateOfOrder).toDateString()
+                new Date(data.date).toDateString()
               ),
               datasets: [
                 {
                   label: "Revenue",
-                  data: revenueDate.map((data) => data._sum.cost),
+                  data: revenueDate.map((data) => data._sum.revenueGenerated),
                   borderColor: "rgb(255, 99, 132)",
                   backgroundColor: "rgba(255, 99, 132, 0.5)",
                 },

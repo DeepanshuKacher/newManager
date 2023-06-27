@@ -33,6 +33,7 @@ export const controllerUrls = {
   dishAnalysis: "analysis/dish",
   kot: "kot",
   templates: "templates",
+  manager: "manager",
 } as const;
 
 type KeysOfUrls = keyof typeof controllerUrls;
