@@ -15,6 +15,7 @@ export interface Dish {
     medium?: { half?: number; full?: number };
     small?: { half?: number; full?: number };
   };
+  dishCode?: number;
 }
 export interface Table {
   id: string;

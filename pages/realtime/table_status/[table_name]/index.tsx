@@ -28,24 +28,32 @@ function DeleteConformationModal({
   sessionId,
   setOrderId,
   orderPrice,
+  kotId,
+  refreshFunction,
 }: {
   dishName: string;
   sessionId: string;
   orderId: string;
   setOrderId: any;
   orderPrice: number | undefined;
+  kotId?: Kot["id"];
+  refreshFunction?: any;
 }) {
   const deleteOrder = () => {
-    if (sessionId && orderId)
-      axiosDeleteFunction({
-        parentUrl: "orders",
-        childUrl: "order",
-        data: {
-          orderId,
-          sessionId,
-        },
-        thenFunction: () => setOrderId(""),
-      });
+    if (!orderId) return alert("No orderid");
+    if (!kotId) return alert("No kotId");
+    axiosDeleteFunction({
+      parentUrl: "orders",
+      childUrl: "order",
+      data: {
+        orderId,
+        kotId,
+      },
+      thenFunction: () => {
+        setOrderId("");
+        refreshFunction();
+      },
+    });
   };
 
   return (
@@ -92,16 +100,20 @@ function TableSession() {
 
   /* states and store */
 
+  const { operationsArray, upperMarkDown } = useAppSelector(
+    (store) => store.billingTamplate
+  );
+
   const [tableOrders, setTableOrders] = useState<Kot[]>([]);
-  const [orderDetail, setOrderDetail] = useState<Kot>();
+  const [orderDetail, setOrderDetail] = useState<Kot["value"]["orders"][0]>();
   const [dishDetail, setDishDetail] = useState<Dish>();
   const [deleteItemName, setDeleteItemName] = useState("");
+  const [deleteKotId, setDeleteKotId] = useState<Kot["id"]>();
   const [deleteItemPrice, setDeleteItemPrice] = useState<number>();
   const [deleteItemOrderId, setDeleteItemOrderId] = useState("");
 
   /* Temp items */
-  const [operationsArray, setOperationArray] = useState<Operations[]>([]);
-  const [upperMarkDown, setUpperMarkDown] = useState("");
+  // const [operationsArray, setOperationArray] = useState<>([]);
 
   const { billingTable } = useAppSelector((store) => store);
 
@@ -127,18 +139,18 @@ function TableSession() {
       router.push("/realtime/table_status");
   }, []);
 
-  useEffect(() => {
-    axiosGetFunction({
-      parentUrl: "templates",
-      thenFunction: (e: {
-        operations: Operations[];
-        upperSectionText: string;
-      }) => {
-        setUpperMarkDown(e.upperSectionText);
-        setOperationArray(e.operations);
-      },
-    });
-  }, []);
+  // useEffect(() => {
+  //   axiosGetFunction({
+  //     parentUrl: "templates",
+  //     thenFunction: (e: {
+  //       operations: Operations[];
+  //       upperSectionText: string;
+  //     }) => {
+  //       setUpperMarkDown(e.upperSectionText);
+  //       setOperationArray(e.operations);
+  //     },
+  //   });
+  // }, []);
 
   // useEffect(() => {
   //   console.log(tableOrders);
@@ -165,17 +177,17 @@ function TableSession() {
     router.push("/realtime/table_status");
   };
 
-  const deleteOrder = (dishId: string) => {
-    if (sessionId && dishId)
-      axiosDeleteFunction({
-        parentUrl: "orders",
-        childUrl: "order",
-        data: {
-          dishId,
-          sessionId,
-        },
-      });
-  };
+  // const deleteOrder = (dishId: string, kotId: string) => {
+  //   if (dishId && kotId)
+  //     axiosDeleteFunction({
+  //       parentUrl: "orders",
+  //       childUrl: "order",
+  //       data: {
+  //         dishId,
+  //         kotId,
+  //       },
+  //     });
+  // };
 
   const clearSession = () => {
     if (sessionId)
@@ -218,8 +230,8 @@ function TableSession() {
     <>
       <TemplateToPrint
         ref={componentRef}
-        upperMarkDown={upperMarkDown}
-        operationsArray={operationsArray}
+        upperMarkDown={upperMarkDown!}
+        operationsArray={operationsArray!}
         orders={returnAllOrders()}
         prefix={selectedTableSection?.prefix}
         suffix={selectedTableSection?.suffix}
@@ -232,13 +244,15 @@ function TableSession() {
           refreshFunction={getData}
         />
       )}
-      {deleteItemName && deleteItemOrderId && (
+      {deleteItemName && deleteItemOrderId && deleteKotId && (
         <DeleteConformationModal
           sessionId={sessionId!}
           dishName={deleteItemName}
           orderId={deleteItemOrderId}
           setOrderId={setDeleteItemOrderId}
           orderPrice={deleteItemPrice}
+          kotId={deleteKotId}
+          refreshFunction={getData}
         />
       )}
 
@@ -336,7 +350,7 @@ function TableSession() {
                   </td>
                   <td
                     style={{ cursor: "pointer" }}
-                    onClick={() => setOrderDetail(item)}
+                    onClick={() => setOrderDetail(order)}
                   >
                     ₹{price}
                   </td>
@@ -346,6 +360,7 @@ function TableSession() {
                       setDeleteItemName(dish?.name!);
                       setDeleteItemOrderId(order.orderId);
                       setDeleteItemPrice(price);
+                      setDeleteKotId(item.id);
                     }}
                   >
                     Delete Item

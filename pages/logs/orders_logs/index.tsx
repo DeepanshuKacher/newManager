@@ -1,12 +1,71 @@
 import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
 
-import { SessionLog } from "../../../interfaces";
+// import { SessionLog } from "../../../interfaces";
 import { useAppSelector } from "../../../useFullItems/redux";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { axiosGetFunction } from "../../../useFullItems/axios";
 import { calculatePrice, formatDate } from "../../../useFullItems/functions";
 import { Order } from "../../realtime/orders/redux";
+import { ComponentToPrint } from "../../../components/pagesComponents/logs/order_logs/KotTemplate";
+import ReactToPrint from "react-to-print";
+
+export enum OrderBy {
+  waiter,
+  self,
+  manager,
+}
+
+export interface KotOrderLog {
+  id: string;
+  dishId: string;
+  kotLogId: string;
+  size: Order["size"];
+  dateTime: string;
+  cost: number;
+  fullQuantity: number | null;
+  halfQuantity: number | null;
+  restaurantId: string;
+  tableId: string | null;
+  tableNumber: number | null;
+  user_description: string;
+  orderBy: OrderBy;
+  waiterId: string | null;
+  chefId: null | string;
+  sessionLogsId: string;
+}
+
+export interface KOTLogs {
+  id: string;
+  parcel: boolean;
+  sessionLogsId: string | null;
+  tableId: string | null;
+  tableNumber: number | null;
+  orderedBy: OrderBy;
+  waiterId: string;
+  chefId: string | null;
+  restaurantId: string;
+  createdAt: string;
+  KotOrder: KotOrderLog[];
+  table: typeof Table;
+}
+
+// export interface KOTLogs {
+//   id: string;
+//   parcel: boolean;
+//   sessionLogsId: string | null;
+//   tableId: string | null;
+//   tableNumber: number | null;
+//   orderedBy: OrderBy;
+//   waiterId: string;
+//   chefId: string | null;
+//   restaurantId: string;
+//   createdAt: string;
+//   session: null | {
+//     tableId: string;
+//     tableNumber: number;
+//   };
+// }
 
 interface OrderModalProps {
   data: string[] | undefined;
@@ -43,7 +102,7 @@ const OrderLogModal = (props: OrderModalProps) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-    {/*     <Table striped bordered>
+        {/*     <Table striped bordered>
           <tbody>
             {data?.map((orderUUID, index) => {
               const currentOrderInfo = noRepeatContainer[orderUUID];
@@ -72,9 +131,10 @@ const OrderLogModal = (props: OrderModalProps) => {
 };
 
 function OrderLogs() {
-  const [showSessionDetail, setSessionDetail] = useState<SessionLog>();
-  const [selectedKot, setSelectKot] = useState<string[]>();
-  const [kot, setKot] = useState<string[][]>([[]]);
+  // const [showSessionDetail, setSessionDetail] = useState<SessionLog>();
+  const kotPrintTemplate = useRef<any>();
+  const [selectedKot, setSelectKot] = useState<KOTLogs>();
+  const [kot, setKot] = useState<KOTLogs[]>([]);
   // const noRepeatContainer = useAppSelector(
   //   (store) => store.orderContainer.noRepeatContainer
   // );
@@ -87,41 +147,69 @@ function OrderLogs() {
     getKots();
   }, []);
 
+  useEffect(() => {
+    if (selectedKot) {
+      document.getElementById("clickToPrintKOT_In_Log")?.click();
+    }
+  }, [selectedKot]);
+
   const getKots = () => {
     axiosGetFunction({
-      parentUrl: "kot",
-      thenFunction: (data: string[][]) => {
-        setKot(convertNestedOrderKeyArrayToNestedOrderUUID_Array(data));
+      parentUrl: "orders",
+      childUrl: "logs",
+      thenFunction: (data: KOTLogs[]) => {
+        console.log(data);
+        setKot(data);
       },
+      useGlobalLoader: true,
     });
   };
 
-  const convertNestedOrderKeyArrayToNestedOrderUUID_Array = (
-    nestedOrderKeysArray: string[][]
-  ) => {
-    const tempContainer: string[][] = [];
-    nestedOrderKeysArray.forEach((orderKeyArray) => {
-      const temp: string[] = [];
+  // const convertNestedOrderKeyArrayToNestedOrderUUID_Array = (
+  //   nestedOrderKeysArray: string[][]
+  // ) => {
+  //   const tempContainer: string[][] = [];
+  //   nestedOrderKeysArray.forEach((orderKeyArray) => {
+  //     const temp: string[] = [];
 
-      orderKeyArray.forEach((orderKey) => {
-        temp.push(convertOrderKeyToUUID(orderKey));
-      });
+  //     orderKeyArray.forEach((orderKey) => {
+  //       temp.push(convertOrderKeyToUUID(orderKey));
+  //     });
 
-      tempContainer.push(temp);
-    });
+  //     tempContainer.push(temp);
+  //   });
 
-    return tempContainer;
-  };
+  //   return tempContainer;
+  // };
 
-  const convertOrderKeyToUUID = (orderKey: string) => {
-    return orderKey.split(":")[0];
-  };
+  // const convertOrderKeyToUUID = (orderKey: string) => {
+  //   return orderKey.split(":")[0];
+  // };
 
   return (
     <>
-      <OrderLogModal
+      {/* <OrderLogModal
         data={selectedKot}
         handleClose={() => setSelectKot(undefined)}
+      /> */}
+      <ComponentToPrint kot={selectedKot} ref={kotPrintTemplate} />
+      <ReactToPrint
+        content={() => kotPrintTemplate.current}
+        onAfterPrint={() => setSelectKot(undefined)}
+        trigger={() => (
+          <button
+            id="clickToPrintKOT_In_Log"
+            style={{
+              width: 0,
+              height: 0,
+              margin: 0,
+              outline: 0,
+              padding: 0,
+              display: "none",
+            }}
+          ></button>
+          // <img style={{ width: 24 }} src="/icons/print.svg/" alt="print icon" />
+        )}
       />
       <Table striped bordered hover>
         <thead>
@@ -134,24 +222,29 @@ function OrderLogs() {
           </tr>
         </thead>
         <tbody>
-          {kot.map((orderArray, index) => {
+          {kot.map((kot) => {
             // const orderDetail = noRepeatContainer?.[orderArray?.[0]];
             // const tableInfo = tables?.find(
             //   (table) => table.id === orderDetail?.tableSectionId
             // );
+            const tableInfo = kot.parcel
+              ? null
+              : tables?.find((table) => table.id === kot?.tableId);
             return (
-              <tr key={orderArray?.[0] ?? 0}>
-      {/*           <td onClick={() => setSelectKot(orderArray)}>
-                  {formatDate(orderDetail?.createdAt)}
-                </td>
-                <td onClick={() => setSelectKot(orderArray)}>
-                  {tableInfo?.prefix}
-                  {orderDetail?.tableNumber}
-                  {tableInfo?.suffix}
-                </td> */}
+              <tr key={kot.id}>
                 <td
-                //  onClick={() => window.print()}
+                //  onClick={() => setSelectKot(orderArray)}
                 >
+                  {formatDate(kot.createdAt)}
+                </td>
+                <td
+                //  onClick={() => setSelectKot(orderArray)}
+                >
+                  {tableInfo
+                    ? `${tableInfo?.prefix}${kot?.tableNumber}${tableInfo?.suffix}`
+                    : "parcel"}
+                </td>
+                <td onClick={() => setSelectKot(kot)}>
                   <img
                     style={{ width: 24 }}
                     src="/icons/print.svg/"
@@ -159,12 +252,9 @@ function OrderLogs() {
                   />
                 </td>
                 {/* <td>
-                  {session.Order_Logs.reduce((acc, item) => acc + item.cost, 0)}
-                </td> */}
-                {/* <td>
                   <img
                     style={{ cursor: "pointer" }}
-                    onClick={() => setSessionDetail(session)}
+                    // onClick={() => setSessionDetail(session)}
                     src="/icons/edit.svg"
                     alt="edit icon"
                   />

@@ -9,6 +9,7 @@ import tableOrders from "../../pages/realtime/table_status/redux";
 import billingTable from "../../pages/realtime/table_status/[table_name]/redux";
 import selfInfo from "./selfInfo";
 import orderModal from "./orderModal";
+import billingTamplate from "./billPrintTamplate";
 
 const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
     billingTable,
     selfInfo,
     orderModal,
+    billingTamplate,
   },
 });
 

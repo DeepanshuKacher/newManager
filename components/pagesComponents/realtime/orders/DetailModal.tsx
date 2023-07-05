@@ -16,7 +16,7 @@ import Table from "react-bootstrap/Table";
 
 interface Props {
   toggleOrderDetailModal: () => void;
-  orderDetail: Kot | null;
+  orderDetail: Kot["value"]["orders"][0] | null;
   refreshFunction?: any;
 }
 
@@ -25,7 +25,15 @@ export const OrderDetailModal = (props: Props) => {
 
   const { toggleOrderDetailModal, orderDetail, refreshFunction } = props;
 
+  const quantity = orderDetail?.fullQuantity
+    ? parseInt(orderDetail.fullQuantity)
+    : orderDetail?.halfQuantity
+    ? parseInt(orderDetail.halfQuantity)
+    : 0;
+
   const [updateQuantityMode, setUpdateQuantityMode] = useState(false);
+
+  const [newQuantity, setNewQuantity] = useState(quantity);
 
   const allDishesh = useAppSelector(
     (store) => store.restaurantInfo.defaultValues.dishesh
@@ -87,21 +95,28 @@ export const OrderDetailModal = (props: Props) => {
   //   }
   // };
 
-  const updateQuantity = (orderDetail: JsonOrder) => {
-    if (orderDetail?.orderId)
-      axiosPatchFunction({
-        parentUrl: "orders",
-        childUrl: "update",
-        data: {
-          orderId: orderDetail?.orderId,
-          // halfQuantity: newHalfQuantity,
-          // fullQuantity: newFullQuantity,
-        },
-        thenFunction: () => {
-          refreshFunction();
-          toggleOrderDetailModal();
-        },
-      });
+  const updateQuantity = (orderDetail: JsonOrder | null) => {
+    if (!orderDetail?.kotId) return alert("No order selected");
+    // if (orderDetail?.orderId)
+    axiosPatchFunction({
+      parentUrl: "orders",
+      childUrl: "update",
+      data: {
+        orderId: orderDetail?.orderId,
+        kotId: `kot:${orderDetail.kotId}`,
+        halfFull: orderDetail?.fullQuantity
+          ? "fullQuantity"
+          : orderDetail?.halfQuantity
+          ? "halfQuantity"
+          : 0,
+
+        newQuantity,
+      },
+      thenFunction: () => {
+        refreshFunction();
+        toggleOrderDetailModal();
+      },
+    });
   };
 
   return (
@@ -109,7 +124,10 @@ export const OrderDetailModal = (props: Props) => {
       {router.pathname === "/realtime/table_status/[table_name]" && (
         <Modal.Header>
           {updateQuantityMode ? (
-            <Button variant="success" /* onClick={()=>updateQuantity()} */>
+            <Button
+              variant="success"
+              onClick={() => updateQuantity(orderDetail)}
+            >
               Save
             </Button>
           ) : (
@@ -126,12 +144,59 @@ export const OrderDetailModal = (props: Props) => {
               <tr>
                 <th>Dish</th>
                 <th>Size</th>
-                <th>Half</th>
-                <th>Full</th>
+                {orderDetail?.fullQuantity ? <th>Full</th> : null}
+                {orderDetail?.halfQuantity ? <th>Half</th> : null}
               </tr>
             </thead>
             <tbody>
-              {orderDetail?.value.orders.map((order) => {
+              <tr>
+                <td>
+                  {
+                    allDishesh.find((dish) => dish.id === orderDetail?.dishId)
+                      ?.name
+                  }
+                </td>
+                <td>{orderDetail?.size}</td>
+                {updateQuantityMode ? (
+                  <td>
+                    <Button
+                      onClick={() => setNewQuantity((current) => current + 1)}
+                    >
+                      +
+                    </Button>{" "}
+                    {newQuantity}{" "}
+                    <Button
+                      onClick={() => {
+                        if (newQuantity > 1) {
+                          setNewQuantity((currentValue) => currentValue - 1);
+                        }
+                      }}
+                    >
+                      -
+                    </Button>
+                  </td>
+                ) : (
+                  <td>{newQuantity} </td>
+                )}
+                {/* {orderDetail?.fullQuantity ? (
+         
+                ) : null} */}
+                {/* {orderDetail?.halfQuantity ? (
+                  updateQuantityMode ? (
+                    <td>
+                      <Button
+                        onClick={() => setNewQuantity((current) => current + 1)}
+                      >
+                        +
+                      </Button>{" "}
+                      {newQuantity} <Button>-</Button>
+                    </td>
+                  ) : (
+                    <td>{orderDetail?.halfQuantity} </td>
+                  )
+                ) : null} */}
+              </tr>
+              {/* {orderDetail?.value.orders.map((order) => {
                 const selectedDish = allDishesh.find(
                   (dish) => dish.id === order.dishId
                 );
@@ -144,7 +209,7 @@ export const OrderDetailModal = (props: Props) => {
                     <td>{order.fullQuantity}</td>
                   </tr>
                 );
-              })}
+              })} */}
             </tbody>
           </Table>
         </Container>

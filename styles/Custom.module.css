@@ -1,0 +1,17 @@
+.printKOT {
+  display: none;
+  /* background-color: blue; */
+}
+
+@media print {
+  .printKOT {
+    display: block;
+    /* background-color: red; */
+  }
+}
+
+.modelWidth {
+  max-width: none !important;
+  width: 90%;
+  /* width: 90vw; */
+}

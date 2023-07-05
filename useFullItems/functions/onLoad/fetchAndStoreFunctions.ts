@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import { axiosGetFunction } from "../../axios";
 import { actionTypes, store } from "../../redux";
 import { Dish, InitialDataTypes } from "../../redux/restaurantInfo";
+import { Operations } from "../../redux/billPrintTamplate";
 
 export interface JsonOrder {
   completed: string;
@@ -125,5 +126,25 @@ export const fetchAndStoreRestaurantAndSelfDetail = async () => {
     .catch((error: AxiosError) => {
       alert("Error");
       console.log({ error });
+    });
+};
+export const fetchAndStoreTemplate = async () => {
+  axios
+    .get("templates")
+    .then((response) => {
+      const e: {
+        operations: Operations[];
+        upperSectionText: string;
+      } = response.data;
+
+      store.dispatch(
+        actionTypes.updatePrintTemplateUpperMarkdown(e.upperSectionText)
+      );
+
+      store.dispatch(actionTypes.updateOperationArray(e.operations));
+    })
+    .catch((error: AxiosError) => {
+      console.log(error);
+      alert("Any error");
     });
 };

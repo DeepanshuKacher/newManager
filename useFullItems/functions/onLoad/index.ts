@@ -6,6 +6,7 @@ import {
   fetchAndStoreOrders,
   fetchAndStoreRestaurantAndSelfDetail,
   fetchAndStoreTableSession,
+  fetchAndStoreTemplate,
 } from "./fetchAndStoreFunctions";
 
 export const selectRestaurantFunction = async (restaurantId: string) => {
@@ -49,11 +50,14 @@ export const selectRestaurantFunction = async (restaurantId: string) => {
 
   const fetchAndStoreOrdersPromis = fetchAndStoreOrders();
   const fetchAndStoreTableSessionPromis = fetchAndStoreTableSession();
-  const fetchAndStoreRestaurantAndSelfDetailPromis = fetchAndStoreRestaurantAndSelfDetail();
+  const fetchAndStoreRestaurantAndSelfDetailPromis =
+    fetchAndStoreRestaurantAndSelfDetail();
+  const fetchAndStoreTemplatePromise = fetchAndStoreTemplate();
 
   await Promise.all([
     fetchAndStoreOrdersPromis,
     fetchAndStoreTableSessionPromis,
     fetchAndStoreRestaurantAndSelfDetailPromis,
+    fetchAndStoreTemplatePromise,
   ]);
 };

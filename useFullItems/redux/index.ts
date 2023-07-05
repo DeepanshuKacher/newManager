@@ -23,6 +23,10 @@ import {
 import { updateBillingTable } from "../../pages/realtime/table_status/[table_name]/redux";
 import { updateSelfInfo } from "./selfInfo";
 import { changeOrderModalShowState } from "./orderModal";
+import {
+  updateOperationArray,
+  updatePrintTemplateUpperMarkdown,
+} from "./billPrintTamplate";
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -45,4 +49,6 @@ export const actionTypes = {
   orderRemove,
   updateSelfInfo,
   changeOrderModalShowState,
+  updateOperationArray,
+  updatePrintTemplateUpperMarkdown,
 };

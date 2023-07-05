@@ -31,10 +31,11 @@ interface Props {
   upperMarkDown: string;
   operationsArray: Operations[];
   orders?: Order[];
-  prefix: string | undefined;
-  suffix: string | undefined;
-  tableNumber: number;
+  prefix?: string | undefined;
+  suffix?: string | undefined;
+  tableNumber?: number;
   shouldDisplayNone?: boolean;
+  kotNumber?: number;
 }
 
 const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
@@ -46,6 +47,7 @@ const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
     suffix,
     tableNumber,
     shouldDisplayNone,
+    kotNumber,
   } = props;
 
   // console.log({ operationsArray });
@@ -116,10 +118,12 @@ const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
         </p>
         <p className={styles.infoDivPara}>
           Table/Room No: {prefix}
-          {tableNumber}
+          {tableNumber ? tableNumber : ""}
           {suffix}
         </p>
-        {/* <p className={styles.infoDivPara}>Bill No.: 45</p> */}
+        {kotNumber ? (
+          <p className={styles.infoDivPara}>Kot No.: {kotNumber}</p>
+        ) : null}
       </div>
       <hr />
       <table

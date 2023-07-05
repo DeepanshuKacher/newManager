@@ -35,8 +35,8 @@ const OrderLogModal = (props: OrderModalProps) => {
       <Modal.Body>
         <Table striped bordered>
           <tbody>
-            {data?.Order_Logs.map((order, index) => {
-              const dish = dishesh.find((dish) => dish.id === order.dishId);
+            {data?.Order_Logs?.map((order, index) => {
+              const dish = dishesh?.find((dish) => dish.id === order.dishId);
               return (
                 <tr key={order.id}>
                   <td>{index + 1}</td>
@@ -103,7 +103,7 @@ function Sessions() {
                   {tableInfo?.suffix}
                 </td>
                 <td>
-                  {session.Order_Logs.reduce((acc, item) => acc + item.cost, 0)}
+                  {session.Order_Logs?.reduce((acc, item) => acc + item.cost, 0)}
                 </td>
                 <td>
                   <img
