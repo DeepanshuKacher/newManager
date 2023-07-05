@@ -7,7 +7,9 @@ import { Order } from "./redux";
 import { Kot } from "../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
 
 function Orders() {
-  const [orderDetailModal, setOrderDetailModal] = useState<null | Kot>(null);
+  const [orderDetailModal, setOrderDetailModal] = useState<
+    null | Kot["value"]["orders"]
+  >(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -35,12 +37,12 @@ function Orders() {
 
   return (
     <>
-      {orderDetailModal && (
-        <OrderDetailModal
+      {/*    {orderDetailModal && (
+        <OrderDetailModal                        // working on it
           orderDetail={orderDetailModal}
           toggleOrderDetailModal={toggleOrderDetailModal}
         />
-      )}
+      )} */}
       <Table striped responsive hover>
         <thead>
           <tr className="table-primary">
@@ -61,6 +63,9 @@ function Orders() {
         </thead>
         <tbody>
           {orders?.map((kot, index) => {
+            console.log(kot);
+            console.log("first");
+
             const tableSection = tables?.find(
               (table) => table?.id === kot?.value?.tableSectionId
             );
@@ -100,7 +105,9 @@ function Orders() {
                   style={{
                     cursor: "pointer",
                   }}
-                  onClick={() => setOrderDetailModal(kot || null)}
+                  onClick={() =>
+                    setOrderDetailModal(kot?.value?.orders || null)
+                  }
                 >
                   <img src="/icons/edit.svg" alt="edit icon" />
                 </td>
