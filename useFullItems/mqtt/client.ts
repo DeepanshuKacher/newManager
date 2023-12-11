@@ -4,9 +4,14 @@ import { mqttFunction } from ".";
 
 export const mqttConnection = (restaurantId: string, selfId: string) => {
   if (!(restaurantId && selfId)) return alert("Please reload");
-  const client = mqtt.connect(privateConstants.mqttURL, {
-    clientId: selfId,
+
+  const client = mqtt.connect({
+    host: privateConstants.mqttHost,
+    port: parseInt(privateConstants.mqttPort!),
+    clientId: selfId
   });
+
+
   client.on("connect", () => {
     client.subscribe(
       privateConstants.mqttSubscribeUrl(restaurantId),

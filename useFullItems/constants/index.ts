@@ -1,4 +1,14 @@
-const enviornmant = process.env.environment;
+
+// const enviornmentProcess = process.env
+
+// const findenviornmentVariable = (variable: string) => {
+//   const item = enviornmentProcess?.[variable]
+//   if (item) return item
+//   else throw new Error(`Enviornment variable ${variable} not found`)
+// }
+const enviornmant = process.env.NEXT_PUBLIC_enviornment
+//  findenviornmentVariable('NEXT_PUBLIC_enviornment')
+
 
 const DEVELOPMENT = "DEVELOPMENT",
   PRODUCTION = "PRODUCTION",
@@ -6,7 +16,7 @@ const DEVELOPMENT = "DEVELOPMENT",
     IS_DEVELOPMENT: enviornmant === DEVELOPMENT,
     IS_PRODUCTION: enviornmant === PRODUCTION,
     PRODUCTION_BASE_URL: "https://api.eatrofoods.com",
-    DEVELOPMENT_BASE_URL: "http://192.168.43.48:5000",
+    DEVELOPMENT_BASE_URL: process.env.NEXT_PUBLIC_DEVELOPMENT_BASE_URL,
     access_token: "access_token",
     restaurantId: "restaurantId",
     transparentBackgroundColor: "#000000a6",
@@ -14,7 +24,9 @@ const DEVELOPMENT = "DEVELOPMENT",
 
 const privateConstants = {
   mqttSubscribeUrl: (restaurantId: string) => `${restaurantId}/#`,
-  mqttURL: "wss://mqtt.eatrofoods.com:8883",
+  mqttHost: process.env.NEXT_PUBLIC_mqtt_host,
+  mqttPort: process.env.NEXT_PUBLIC_mqtt_port
+
 };
 
 export { constants, privateConstants };
