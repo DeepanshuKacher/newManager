@@ -6,16 +6,24 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { LineChart } from "../../../components/Charts/LineChart";
 import { axiosPostFunction, controllerUrls } from "../../../useFullItems/axios";
+import dayjs from "dayjs";
+
+enum ModeOfIncome {
+  online,
+  cash,
+}
 
 function Revenue() {
   const [startingDate, setStartingDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-  const [revenueDate, setRevenueDate] = useState<
+  const [revenueData, setRevenueData] = useState<
     {
-      _sum: {
-        revenueGenerated: number;
-      };
-      date: string;
+      dateTime: string;
+      id: string;
+      restaurantId: string;
+      modeOfIncome: ModeOfIncome | null;
+      parcelRevenue: boolean;
+      revenueGenerated: number;
     }[]
   >([]);
 
@@ -29,27 +37,34 @@ function Revenue() {
         startDate: startingDate,
         endDate: endDate,
       },
-      thenFunction: setRevenueDate,
+      thenFunction: (e: any) => {
+        console.log(e);
+        setRevenueData(e);
+      },
     });
   };
 
   useEffect(() => {
-    console.log(revenueDate);
-  }, [revenueDate]);
+    console.log(revenueData);
+  }, [revenueData]);
 
   return (
     <Container fluid>
       <Row>
         <Col style={{ height: "68vh" }}>
           <LineChart
+            title={`Total = ${revenueData.reduce(
+              (total, currentValue) => total + currentValue.revenueGenerated,
+              0
+            )}`}
             data={{
-              labels: revenueDate.map((data) =>
-                new Date(data.date).toDateString()
+              labels: revenueData.map((data) =>
+                dayjs(data.dateTime).format("HH:mm DD/M")
               ),
               datasets: [
                 {
                   label: "Revenue",
-                  data: revenueDate.map((data) => data._sum.revenueGenerated),
+                  data: revenueData.map((data) => data.revenueGenerated),
                   borderColor: "rgb(255, 99, 132)",
                   backgroundColor: "rgba(255, 99, 132, 0.5)",
                 },
@@ -63,7 +78,7 @@ function Revenue() {
           <Form.Group>
             <Form.Label>Starting Date</Form.Label>
             <Form.Control
-              type="date"
+              type="datetime-local"
               onChange={(e) => setStartingDate(new Date(e.target.value))}
             />
           </Form.Group>
@@ -72,7 +87,7 @@ function Revenue() {
           <Form.Group>
             <Form.Label>End Date</Form.Label>
             <Form.Control
-              type="date"
+              type="datetime-local"
               onChange={(e) => setEndDate(new Date(e.target.value))}
             />
           </Form.Group>

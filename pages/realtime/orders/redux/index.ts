@@ -1,19 +1,30 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Kot } from "../../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
 
-export interface Order {
+enum Size {
+  Large = "large",
+  Medium = "medium",
+  Small = "small",
+}
+
+interface CartItem {
   dishId: string;
   orderId: string;
   tableNumber: number;
   tableSectionId: string;
   user_description?: string;
   orderedBy: string;
-  size: "large" | "medium" | "small";
-  fullQuantity?: string;
-  halfQuantity?: string;
+  size: Size;
+  fullQuantity: number;
+  halfQuantity: number;
   chefAssign?: string;
   completed?: string;
-  createdAt: string;
+  createdAt: number;
+  sessionId: string;
+  restaurantId: string;
+}
+export interface Order extends CartItem {
+  kotId: string;
 }
 
 interface InitialDataTypes {

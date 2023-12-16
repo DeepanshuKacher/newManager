@@ -6,10 +6,21 @@ export const mqttConnection = (restaurantId: string, selfId: string) => {
   if (!(restaurantId && selfId)) return alert("Please reload");
 
   const client = mqtt.connect({
-    host: privateConstants.mqttHost,
-    port: parseInt(privateConstants.mqttPort!),
-    clientId: selfId
+    port: parseInt(privateConstants.mqttPort!),  
+    clientId: selfId,
+    protocol:'wss',
+    hostname:privateConstants.mqttHostName
   });
+
+  // console.log({
+  //   host: privateConstants.mqttHost,
+  //   port: parseInt(privateConstants.mqttPort!),
+  //   clientId: selfId
+  // })
+
+  // const client = mqtt.connect(`wss://mqtt.eatrofoods.com:8883`,{
+  //   clientId:selfId
+  // })
 
 
   client.on("connect", () => {

@@ -24,9 +24,8 @@ const DEVELOPMENT = "DEVELOPMENT",
 
 const privateConstants = {
   mqttSubscribeUrl: (restaurantId: string) => `${restaurantId}/#`,
-  mqttHost: process.env.NEXT_PUBLIC_mqtt_host,
+  mqttHostName: process.env.NEXT_PUBLIC_mqtt_hostname,
   mqttPort: process.env.NEXT_PUBLIC_mqtt_port
-
 };
 
 export { constants, privateConstants };
