@@ -145,8 +145,8 @@ const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
           {orders?.map((order) => {
             const dish = dishObj[order.dishId];
 
-            const fullQuantityNumber = parseInt(order.fullQuantity || "0");
-            const halfQuantityNumber = parseInt(order.halfQuantity || "0");
+            const fullQuantityNumber = order.fullQuantity;
+            const halfQuantityNumber = order.halfQuantity;
 
             if (fullQuantityNumber > 0 && halfQuantityNumber > 0)
               return (
@@ -210,8 +210,8 @@ const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
                   {operation.operation === "Percentage"
                     ? "%"
                     : operation.operation === "Plus"
-                    ? "+"
-                    : "nil"}
+                      ? "+"
+                      : "nil"}
                 </td>
                 <td>
                   {calculateOperations(

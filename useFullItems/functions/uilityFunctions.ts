@@ -3,6 +3,7 @@ import { Order } from "../../pages/realtime/orders/redux";
 import { Dish } from "../redux/restaurantInfo";
 import dateFormatter from "dayjs";
 import { store } from "../redux";
+import { OrderReturnFromRedis } from "../../interfaces";
 
 export const concatString = (...args: string[]) =>
   args.reduce(
@@ -30,14 +31,46 @@ export const calculatePrice = (order: Order, dish?: Dish) => {
   const { size, fullQuantity, halfQuantity } = order;
 
   returnPrice =
-    (convertNumberStringToInt(fullQuantity) || 0) *
+    fullQuantity *
     (dish?.price?.[order.size]?.full || 0);
   returnPrice +=
-    (convertNumberStringToInt(halfQuantity) || 0) *
+    halfQuantity *
     (dish?.price?.[order.size]?.half || 0);
 
   return returnPrice;
 };
+
+
+export const convertRedisOrderToOrder = (redisOrder: OrderReturnFromRedis): Order => {
+
+  const {
+    createdAt,
+    dishId,
+    fullQuantity,
+    halfQuantity,
+    kotId,
+    orderedBy,
+    orderId,
+    restaurantId,
+    sessionId,
+    size,
+    tableNumber,
+    tableSectionId,
+    chefAssign,
+    completed,
+    user_description
+  } = redisOrder
+
+  return {
+    createdAt: parseInt(createdAt),
+    dishId, fullQuantity: parseInt(fullQuantity),
+    halfQuantity: parseInt(halfQuantity), kotId, orderedBy,
+    orderId, restaurantId, sessionId, size, tableNumber: parseInt(tableNumber),
+    tableSectionId, chefAssign, completed, user_description
+  }
+
+}
+
 
 export const calculatePriceForOrder = (orders: Order[]) => {
   const { dishObj } = store.getState().restaurantInfo.defaultValues;

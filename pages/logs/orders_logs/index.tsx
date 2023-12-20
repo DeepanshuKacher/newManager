@@ -158,7 +158,6 @@ function OrderLogs() {
       parentUrl: "orders",
       childUrl: "logs",
       thenFunction: (data: KOTLogs[]) => {
-        console.log(data);
         setKot(data);
       },
       useGlobalLoader: true,

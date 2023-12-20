@@ -3,47 +3,52 @@ import { axiosGetFunction } from "../../axios";
 import { actionTypes, store } from "../../redux";
 import { Dish, InitialDataTypes } from "../../redux/restaurantInfo";
 import { Operations } from "../../redux/billPrintTamplate";
+import { Order } from "../../../pages/realtime/orders/redux";
+import { RetreveKotJson } from "../../../interfaces";
+import { convertRedisOrderToOrder } from "../uilityFunctions";
 
-export interface JsonOrder {
-  completed: string;
-  createdAt: string;
-  dishId: string;
-  fullQuantity: string;
-  halfQuantity: string;
-  kotId: string;
-  orderedBy: string;
-  orderId: string;
-  restaurantId: string;
-  size: "large" | "medium" | "small";
-  tableNumber: number;
-  tableSectionId: string;
-  user_description: string;
-  sessionId: string;
-  chefAssign: string;
-}
+// export interface JsonOrder {
+//   completed: string;
+//   createdAt: string;
+//   dishId: string;
+//   fullQuantity: string;
+//   halfQuantity: string;
+//   kotId: string;
+//   orderedBy: string;
+//   orderId: string;
+//   restaurantId: string;
+//   size: "large" | "medium" | "small";
+//   tableNumber: number;
+//   tableSectionId: string;
+//   user_description: string;
+//   sessionId: string;
+//   chefAssign: string;
+// }
 
-export interface Kot {
-  id: `kot:${string}`;
-  value: {
-    kotId: string;
-    tableSectionId: string;
-    tableNumber: number;
-    restaurantId: string;
-    createdAt: number;
-    orderedBy: string;
-    completed: number;
-    sessionId: string;
-    chefAssign: string;
-    orders: JsonOrder[];
-  };
-}
+// export interface Kot {
+//   id: `kot:${string}`;
+//   value: {
+//     kotId: string;
+//     tableSectionId: string;
+//     tableNumber: number;
+//     restaurantId: string;
+//     createdAt: number;
+//     orderedBy: string;
+//     completed: number;
+//     sessionId: string;
+//     chefAssign: string;
+//     orders: JsonOrder[];
+//   };
+// }
 
 export const fetchAndStoreOrders = async () => {
-  const data: Kot[] = await axiosGetFunction({
+  const data: RetreveKotJson[] = await axiosGetFunction({
     parentUrl: "orders",
   });
 
-  store.dispatch(actionTypes.storeDishOrders(data));
+  const orders: Order[] = data.map(item => convertRedisOrderToOrder(item.value))
+
+  store.dispatch(actionTypes.storeDishOrders(orders));
 };
 
 export const fetchAndStoreTableSession = async () => {

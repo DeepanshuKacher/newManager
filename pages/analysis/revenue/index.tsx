@@ -3,50 +3,87 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
+import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import { LineChart } from "../../../components/Charts/LineChart";
 import { axiosPostFunction, controllerUrls } from "../../../useFullItems/axios";
 import dayjs from "dayjs";
+
+
+interface RevenueData {
+  dateTime: string;
+  modeOfIncome: ModeOfIncome | null;
+  parcelRevenue: boolean;
+  revenueGenerated: number;
+}
 
 enum ModeOfIncome {
   online,
   cash,
 }
 
+
+
+const DataComponent = ({ data }: { data: RevenueData[] }) => {
+  const totalRevenue = data.reduce((acc, item) => acc + item.revenueGenerated, 0);
+
+  return (
+    <div style={{ overflowX: 'auto' }}>
+      <Table striped bordered hover responsive>
+        <thead>
+          <tr>
+            <th>Date Time</th>
+            <th>Mode of Income</th>
+            <th>Parcel Revenue</th>
+            <th>Revenue Generated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item, index) => (
+            <tr key={index}>
+              <td>{dayjs(item.dateTime).format("DD/M/YY HH:mm")}</td>
+              <td>{item.modeOfIncome || '-'}</td>
+              <td>{item.parcelRevenue ? 'Yes' : 'No'}</td>
+              <td>{item.revenueGenerated}</td>
+            </tr>
+          ))}
+          <tr>
+            <td colSpan={3} style={{ textAlign: 'right' }}>Total</td>
+            <td>{totalRevenue}</td>
+          </tr>
+        </tbody>
+      </Table>
+    </div>
+  );
+};
+
+
+
+
 function Revenue() {
-  const [startingDate, setStartingDate] = useState<Date>();
-  const [endDate, setEndDate] = useState<Date>();
+  const [startDateTime, setStartDateTime] = useState<number>();
+  const [endDateTime, setEndDateTime] = useState<number>();
   const [revenueData, setRevenueData] = useState<
-    {
-      dateTime: string;
-      id: string;
-      restaurantId: string;
-      modeOfIncome: ModeOfIncome | null;
-      parcelRevenue: boolean;
-      revenueGenerated: number;
-    }[]
+    RevenueData[]
   >([]);
 
   const getData = () => {
-    if (!startingDate) return alert("Please select starting date");
-    if (!endDate) return alert("Please select end date");
+    if (!startDateTime) return alert("Please select starting date");
+    if (!endDateTime) return alert("Please select end date");
     axiosPostFunction({
       parentUrl: controllerUrls.revenueAnalysis,
       loader: true,
       data: {
-        startDate: startingDate,
-        endDate: endDate,
+        startDateTime,
+        endDateTime,
       },
-      thenFunction: (e: any) => {
-        console.log(e);
-        setRevenueData(e);
-      },
+      thenFunction: setRevenueData
     });
   };
 
-  useEffect(() => {
-    console.log(revenueData);
-  }, [revenueData]);
+  // useEffect(() => {
+  //   console.log(revenueData);
+  // }, [revenueData]);
 
   return (
     <Container fluid>
@@ -79,7 +116,7 @@ function Revenue() {
             <Form.Label>Starting Date</Form.Label>
             <Form.Control
               type="datetime-local"
-              onChange={(e) => setStartingDate(new Date(e.target.value))}
+              onChange={(e) => setStartDateTime(new Date(e.target.value).getTime())}
             />
           </Form.Group>
         </Col>
@@ -88,7 +125,7 @@ function Revenue() {
             <Form.Label>End Date</Form.Label>
             <Form.Control
               type="datetime-local"
-              onChange={(e) => setEndDate(new Date(e.target.value))}
+              onChange={(e) => setEndDateTime(new Date(e.target.value).getTime())}
             />
           </Form.Group>
         </Col>
@@ -103,6 +140,7 @@ function Revenue() {
           </Button>
         </Col>
       </Row>
+      <DataComponent data={revenueData} />
     </Container>
   );
 }

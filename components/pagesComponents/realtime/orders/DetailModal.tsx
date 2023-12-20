@@ -1,22 +1,17 @@
 import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { Order } from "../../../../pages/realtime/orders/redux";
 import { useAppSelector } from "../../../../useFullItems/redux";
 import { axiosPatchFunction } from "../../../../useFullItems/axios";
 import { useRouter } from "next/router";
-import {
-  JsonOrder,
-  Kot,
-} from "../../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
+
 import Table from "react-bootstrap/Table";
 
 interface Props {
   toggleOrderDetailModal: () => void;
-  orderDetail: Kot["value"]["orders"][0] | null;
+  orderDetail: Order
   refreshFunction?: any;
 }
 
@@ -25,98 +20,32 @@ export const OrderDetailModal = (props: Props) => {
 
   const { toggleOrderDetailModal, orderDetail, refreshFunction } = props;
 
-  const quantity = orderDetail?.fullQuantity
-    ? parseInt(orderDetail.fullQuantity)
-    : orderDetail?.halfQuantity
-    ? parseInt(orderDetail.halfQuantity)
-    : 0;
-
   const [updateQuantityMode, setUpdateQuantityMode] = useState(false);
 
-  const [newQuantity, setNewQuantity] = useState(quantity);
+  const [fullQuantity, setFullQuantity] = useState(orderDetail.fullQuantity)
+  const [halfQuantity, setHalfQuantity] = useState(orderDetail.halfQuantity);
 
   const allDishesh = useAppSelector(
     (store) => store.restaurantInfo.defaultValues.dishesh
   );
-  // const [newFullQuantity, setNewFullQuantity] = useState(
-  //   parseInt(orderDetail?.value.)
-  // );
-  // const [newHalfQuantity, setNewHalfQuantity] = useState(
-  //   parseInt(orderDetail?.halfQuantity!)
-  // );
 
-  const updateQuantityState = (
-    plusOrMinus: "+" | "-",
-    value: number,
-    changeFunction: React.Dispatch<React.SetStateAction<number>>
-  ) => {
-    switch (plusOrMinus) {
-      case "+":
-        changeFunction((currentValue) => currentValue + 1);
-        break;
-      case "-":
-        if (value > 1) changeFunction((currentValue) => currentValue - 1);
-        break;
-    }
-  };
 
-  // const updateQuantityState = (
-  //   plusOrMinus: "+" | "-",
-  //   fullOrHalf: "full" | "half"
-  // ) => {
-  //   switch (fullOrHalf) {
-  //     case "full":
-  //       if (newFullQuantity > 0) {
-  //         switch (plusOrMinus) {
-  //           case "+":
-  //             setNewFullQuantity((current) => current + 1);
-  //             break;
+  const updateQuantity = (orderDetail: Order) => {
+    if (!orderDetail.orderId) return alert("No order selected");
 
-  //           case "-":
-  //             setNewFullQuantity((current) => current - 1);
-  //             break;
-  //         }
-  //       }
-  //       break;
-
-  //     case "half":
-  //       if (newHalfQuantity > 0) {
-  //         switch (plusOrMinus) {
-  //           case "+":
-  //             setNewHalfQuantity((current) => current + 1);
-  //             break;
-
-  //           case "-":
-  //             setNewHalfQuantity((current) => current - 1);
-  //             break;
-  //         }
-  //       }
-  //       break;
-  //   }
-  // };
-
-  const updateQuantity = (orderDetail: JsonOrder | null) => {
-    if (!orderDetail?.kotId) return alert("No order selected");
-    // if (orderDetail?.orderId)
     axiosPatchFunction({
-      parentUrl: "orders",
-      childUrl: "update",
+      parentUrl: 'orders',
+      childUrl: 'update',
       data: {
         orderId: orderDetail?.orderId,
-        kotId: `kot:${orderDetail.kotId}`,
-        halfFull: orderDetail?.fullQuantity
-          ? "fullQuantity"
-          : orderDetail?.halfQuantity
-          ? "halfQuantity"
-          : 0,
-
-        newQuantity,
+        newFullQuantity: fullQuantity,
+        newHalfQuantity: halfQuantity
       },
       thenFunction: () => {
-        refreshFunction();
-        toggleOrderDetailModal();
-      },
-    });
+        refreshFunction()
+        toggleOrderDetailModal()
+      }
+    })
   };
 
   return (
@@ -144,8 +73,9 @@ export const OrderDetailModal = (props: Props) => {
               <tr>
                 <th>Dish</th>
                 <th>Size</th>
-                {orderDetail?.fullQuantity ? <th>Full</th> : null}
-                {orderDetail?.halfQuantity ? <th>Half</th> : null}
+                <th>Full</th>
+                <th>Half</th>
+
               </tr>
             </thead>
             <tbody>
@@ -160,15 +90,15 @@ export const OrderDetailModal = (props: Props) => {
                 {updateQuantityMode ? (
                   <td>
                     <Button
-                      onClick={() => setNewQuantity((current) => current + 1)}
+                      onClick={() => setFullQuantity((current) => current + 1)}
                     >
                       +
                     </Button>{" "}
-                    {newQuantity}{" "}
+                    {fullQuantity}{" "}
                     <Button
                       onClick={() => {
-                        if (newQuantity > 1) {
-                          setNewQuantity((currentValue) => currentValue - 1);
+                        if (fullQuantity > 1) {
+                          setFullQuantity((currentValue) => currentValue - 1);
                         }
                       }}
                     >
@@ -176,7 +106,28 @@ export const OrderDetailModal = (props: Props) => {
                     </Button>
                   </td>
                 ) : (
-                  <td>{newQuantity} </td>
+                  <td>{fullQuantity} </td>
+                )}
+                {updateQuantityMode ? (
+                  <td>
+                    <Button
+                      onClick={() => setHalfQuantity((current) => current + 1)}
+                    >
+                      +
+                    </Button>{" "}
+                    {halfQuantity}{" "}
+                    <Button
+                      onClick={() => {
+                        if (halfQuantity > 1) {
+                          setHalfQuantity((currentValue) => currentValue - 1);
+                        }
+                      }}
+                    >
+                      -
+                    </Button>
+                  </td>
+                ) : (
+                  <td>{halfQuantity} </td>
                 )}
                 {/* {orderDetail?.fullQuantity ? (
          

@@ -49,19 +49,27 @@ export default function App({ Component, pageProps }: AppProps) {
     };
   }, [restaurantId, selfInfo.id]);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     if (restaurantId) {
-  //       console.log({ restaurantId });
-  //       await selectRestaurantFunction(restaurantId, () => {
-  //         setPageFullyLoaded(true);
-  //       });
-  //     } else {
-  //       // await router.push("/");
-  //       setPageFullyLoaded(true);
-  //     }
-  //   })();
-  // }, []);
+/*   useEffect(() => {
+    const ws = new WebSocket('ws://localhost:8765/kot');
+
+    ws.onopen = () => {
+      if (constants.IS_DEVELOPMENT) console.log('WebSocket connected');
+
+    }
+
+    ws.onclose = (event) => {
+      if (constants.IS_DEVELOPMENT) console.log('WebSocket closed:', event.reason);
+    }
+
+    ws.onerror = (error) => {
+      if (constants.IS_DEVELOPMENT) console.error('WebSocket error:', error);
+    }
+
+    return () => {
+      if (ws && ws.readyState === ws.OPEN) ws.close();
+    }
+
+  }, []) */
 
   useEffect(() => {
     (async () => {

@@ -76,6 +76,7 @@ export type WaiterType = (typeof initialState.defaultValues.waiters)[0];
 
 export type RestaurantSliceType = typeof initialState.defaultValues;
 
+
 const restaurantInfoSlice = createSlice({
   name: "restaurantInfo",
   initialState,

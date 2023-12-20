@@ -12,8 +12,8 @@ import {
 import {
   unshiftInOrderContainer,
   storeDishOrders,
-  orderAccepted,
-  orderCompleted,
+  // orderAccepted,
+  // orderCompleted,
   orderRemove,
 } from "../../pages/realtime/orders/redux";
 import {
@@ -44,8 +44,8 @@ export const actionTypes = {
   storeDishOrders,
   loadTableStatus,
   updateBillingTable,
-  orderAccepted,
-  orderCompleted,
+  // orderAccepted,
+  // orderCompleted,
   orderRemove,
   updateSelfInfo,
   changeOrderModalShowState,

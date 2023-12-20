@@ -4,16 +4,15 @@ import { useState } from "react";
 import { useAppSelector } from "../../../useFullItems/redux";
 import { OrderDetailModal } from "../../../components/pagesComponents/realtime/orders/DetailModal";
 import { Order } from "./redux";
-import { Kot } from "../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
+import dayjs from "dayjs";
 
 function Orders() {
   const [orderDetailModal, setOrderDetailModal] = useState<
-    null | Kot["value"]["orders"]
+    null | Order
   >(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
 
   const {
-    dishesh: disheshData,
     waiters,
     tables,
     chefs,
@@ -24,6 +23,8 @@ function Orders() {
   useEffect(() => {
     if (checkBottomScroll()) messageEndRef.current?.scrollIntoView();
   }, [orders]);
+
+
 
   const checkBottomScroll = () => {
     let documentHeight = document.body.scrollHeight;
@@ -37,12 +38,12 @@ function Orders() {
 
   return (
     <>
-      {/*    {orderDetailModal && (
-        <OrderDetailModal                        // working on it
+      {orderDetailModal && (
+        <OrderDetailModal
           orderDetail={orderDetailModal}
           toggleOrderDetailModal={toggleOrderDetailModal}
         />
-      )} */}
+      )}
       <Table striped responsive hover>
         <thead>
           <tr className="table-primary">
@@ -62,42 +63,41 @@ function Orders() {
           </tr>
         </thead>
         <tbody>
-          {orders?.map((kot, index) => {
-            console.log(kot);
-            console.log("first");
+          {orders.map((kot, index) => {
+
+
 
             const tableSection = tables?.find(
-              (table) => table?.id === kot?.value?.tableSectionId
+              (table) => table?.id === kot?.tableSectionId
             );
             return (
               <tr
-                className={`${
-                  kot.value.chefAssign && kot.value.completed
-                    ? ""
-                    : kot.value.chefAssign
+                className={`${kot?.chefAssign && kot?.completed
+                  ? ""
+                  : kot?.chefAssign
                     ? "bg-success"
                     : "bg-warning"
-                }`}
-                key={kot.id}
+                  }`}
+                key={kot.orderId}
               >
                 <th scope="row">{index + 1}</th>
                 <td>
-                  {new Date(kot.value.createdAt || "").toLocaleTimeString()}
+                  {dayjs(kot?.createdAt).format("HH:mm DD/MM")}
                 </td>
-                {/* <td>
-                  {disheshData.find((dish) => dish.id === item?.dishId)?.name}
-                </td> */}
+                {/* <td> */}
+                {/* {disheshData.find((dish) => dish.id === item?.dishId)?.name} */}
+                {/* </td>  */}
                 <td>
                   {tableSection?.prefix}
-                  {kot.value.tableNumber}
+                  {kot?.tableNumber}
                   {tableSection?.suffix}
                 </td>
                 <td>
-                  {waiters.find((waiter) => waiter.id === kot?.value.orderedBy)
+                  {waiters.find((waiter) => waiter.id === kot?.orderedBy)
                     ?.name || "self"}
                 </td>
                 <td>
-                  {chefs.find((chef) => chef.id === kot?.value?.chefAssign)
+                  {chefs.find((chef) => chef.id === kot?.chefAssign)
                     ?.name || ""}
                 </td>
                 {/* <td>waiter assign</td> */}
@@ -106,7 +106,7 @@ function Orders() {
                     cursor: "pointer",
                   }}
                   onClick={() =>
-                    setOrderDetailModal(kot?.value?.orders || null)
+                    setOrderDetailModal(kot || null)
                   }
                 >
                   <img src="/icons/edit.svg" alt="edit icon" />
