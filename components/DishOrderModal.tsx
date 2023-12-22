@@ -145,17 +145,17 @@ function DishOrderModal(props: Props) {
     if (!selectedDishId) return alert("Please Select Dish");
     if (!(fullQuantity || halfQuantity)) return alert("Please Select Quantity");
     if (parcelOrder === "parcel") {
-      setOrderItem((currentValue) => [
-        ...currentValue,
-        {
-          dishId: selectedDishId,
-          size: dishSize,
-          fullQuantity: fullQuantity,
-          halfQuantity: halfQuantity,
-          user_description: userDescription,
-          key: Math.round(Math.random() * 1000000),
-        },
-      ]);
+      // setOrderItem((currentValue) => [
+      //   ...currentValue,
+      //   {
+      //     dishId: selectedDishId,
+      //     size: dishSize,
+      //     fullQuantity: fullQuantity,
+      //     halfQuantity: halfQuantity,
+      //     user_description: userDescription,
+      //     key: Math.round(Math.random() * 1000000),
+      //   },
+      // ]);
 
       reset();
     }
@@ -479,30 +479,6 @@ function DishOrderModal(props: Props) {
                     })}
                   </tbody>
                 </BootstrapTable>
-
-                <TemplateToPrint
-                  ref={printComponentRef}
-                  upperMarkDown={upperMarkDown!}
-                  operationsArray={operationsArray!}
-                  kotNumber={kotNumber}
-                  prefix="parcel"
-                  orders={orderItem.map((order) => {
-                    return {
-                      createdAt: "",
-                      dishId: order.dishId,
-                      orderedBy: "",
-                      orderId: Math.round(Math.random() * 10000).toString(),
-                      size: order.size,
-                      tableNumber: 0,
-                      tableSectionId: "",
-                      chefAssign: "",
-                      completed: "0",
-                      fullQuantity: order?.fullQuantity?.toString() || "0",
-                      halfQuantity: order?.halfQuantity?.toString() || "0",
-                      user_description: order.user_description,
-                    };
-                  })}
-                />
               </Row>
             </Col>
           </Row>
