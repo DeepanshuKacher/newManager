@@ -39,31 +39,31 @@ const orderStatusUpdation = {
   Completed: "Completed",
   Remove: "Remove",
 };
-export const updateOrderStatus = (payload: {
-  orderId: Kot["id"];
-  orderStatus: keyof typeof orderStatusUpdation;
-  chefId: string;
-}) => {
-  switch (payload.orderStatus) {
-    case "Accept":
-      store.dispatch(
-        actionTypes.orderAccepted({
-          chefId: payload.chefId,
-          orderId: payload.orderId,
-        })
-      );
-      break;
+// export const updateOrderStatus = (payload: {
+//   orderId: Kot["id"];
+//   orderStatus: keyof typeof orderStatusUpdation;
+//   chefId: string;
+// }) => {
+//   switch (payload.orderStatus) {
+//     case "Accept":
+//       store.dispatch(
+//         actionTypes.orderAccepted({
+//           chefId: payload.chefId,
+//           orderId: payload.orderId,
+//         })
+//       );
+//       break;
 
-    case "Completed":
-      store.dispatch(actionTypes.orderCompleted(payload.orderId));
-      break;
+//     case "Completed":
+//       store.dispatch(actionTypes.orderCompleted(payload.orderId));
+//       break;
 
-    case "Remove":
-      store.dispatch(actionTypes.orderRemove(payload.orderId));
-      break;
+//     case "Remove":
+//       store.dispatch(actionTypes.orderRemove(payload.orderId));
+//       break;
 
-    default:
-      console.log(payload);
-      break;
-  }
-};
+//     default:
+//       console.log(payload);
+//       break;
+//   }
+// };

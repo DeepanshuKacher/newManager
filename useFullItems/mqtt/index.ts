@@ -5,7 +5,7 @@ import {
   updateTableStatus,
   pushInOrderContainer,
   convertCartToOrder,
-  updateOrderStatus,
+  // updateOrderStatus,
 } from "./functions";
 
 const mqttPayloadCode = {
@@ -46,7 +46,7 @@ export const mqttFunction = (props: Props) => {
       break;
 
     case "updateOrder":
-      updateOrderStatus(message);
+      // updateOrderStatus(message);
       break;
 
     default:
