@@ -1,4 +1,5 @@
-import { Order } from "../../pages/realtime/orders/redux";
+// import { Order } from "../../pages/realtime/orders/redux";
+import { Order } from "../../interfaces";
 import { constants } from "../constants";
 import { printKot } from "../pythonPrintWebsocket";
 import {
