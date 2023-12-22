@@ -1,14 +1,12 @@
 import React, { useContext } from "react";
 import style from "../../../../styles/Custom.module.css";
-import { Kot } from "../../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
-import { KOTLogs } from "../../../../pages/logs/orders_logs";
+// import { Kot } from "../../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
+// import { KOTLogs } from "../../../../pages/logs/orders_logs";
 import { useAppSelector } from "../../../../useFullItems/redux";
 
-interface Props {
-  kot?: KOTLogs;
-}
 
-export const ComponentToPrint = React.forwardRef((props: Props, ref: any) => {
+
+export const ComponentToPrint = React.forwardRef((props: any, ref: any) => {
   //   const value = props.kot?.value;
   //   const { dish, tables } = useContext(MyContext);
   //   const selectedTable = tables[props.kot?.value?.tableSectionId!];
@@ -52,7 +50,7 @@ export const ComponentToPrint = React.forwardRef((props: Props, ref: any) => {
           </tr>
         </thead>
         <tbody>
-          {props.kot?.KotOrder.map((order, index) => {
+          {props.kot?.KotOrder.map((order: any, index: number) => {
             return (
               <tr key={index}>
                 <td>{dishObj[order?.dishId]?.name}</td>
