@@ -32,7 +32,7 @@ function NavItems() {
         <NavDropdown.Item onClick={()=>router.push('/manage_staff/manager')} >Manager</NavDropdown.Item>
       </NavDropdown>
       <Nav.Link onClick={() => store.dispatch(actionTypes.changeOrderModalShowState(true))}>Parcel/Order</Nav.Link>
-      <Nav.Link onClick={()=>router.push('/parcel')}>Parcel/Order</Nav.Link>
+      {/* <Nav.Link onClick={()=>router.push('/parcel')}>Parcel/Order</Nav.Link> */}
       <NavDropdown title="Reviews/feedback">
         <NavDropdown.Item onClick={()=>router.push('/reviews')}>Reviews</NavDropdown.Item>
         <NavDropdown.Item onClick={()=>router.push('/feedback')}>Feedback</NavDropdown.Item>

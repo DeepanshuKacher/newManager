@@ -27,9 +27,11 @@ if (typeof window !== 'undefined') {
 
     ws.onmessage = (event) => {
         if (event.data) {
+            const parsedData = JSON.parse(event.data)
+            console.log(parsedData);
             axiosPatchFunction({
                 data: {
-                    kotId: JSON.parse(event.data).kotId
+                    kotId: parsedData.response
                 }, parentUrl: 'orders',
                 childUrl: 'incrementPrintCount'
             })

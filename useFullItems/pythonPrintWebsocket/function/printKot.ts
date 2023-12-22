@@ -22,7 +22,7 @@ export const printKot = (kot: Order[]) => {
             quantity,
             size,
             kotCount: item?.kotCount,
-            printCount: item?.printCount,
+            printCount: item?.printCount + 1,
             kotId: item?.kotId
         })
     }

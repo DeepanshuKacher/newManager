@@ -1,5 +1,6 @@
 import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
+import Button from 'react-bootstrap/Button';
 
 // import { SessionLog } from "../../../interfaces";
 import { useAppSelector } from "../../../useFullItems/redux";
@@ -9,135 +10,72 @@ import { calculatePrice, formatDate } from "../../../useFullItems/functions";
 import { Order } from "../../realtime/orders/redux";
 import { ComponentToPrint } from "../../../components/pagesComponents/logs/order_logs/KotTemplate";
 import ReactToPrint from "react-to-print";
+import { RetreveKotJson } from "../../../interfaces";
+import dateFormatter from "dayjs";
 
-export enum OrderBy {
-  waiter,
-  self,
-  manager,
-}
 
-export interface KotOrderLog {
-  id: string;
-  dishId: string;
-  kotLogId: string;
-  size: Order["size"];
-  dateTime: string;
-  cost: number;
-  fullQuantity: number | null;
-  halfQuantity: number | null;
-  restaurantId: string;
-  tableId: string | null;
-  tableNumber: number | null;
-  user_description: string;
-  orderBy: OrderBy;
-  waiterId: string | null;
-  chefId: null | string;
-  sessionLogsId: string;
-}
-
-export interface KOTLogs {
-  id: string;
-  parcel: boolean;
-  sessionLogsId: string | null;
-  tableId: string | null;
-  tableNumber: number | null;
-  orderedBy: OrderBy;
-  waiterId: string;
-  chefId: string | null;
-  restaurantId: string;
-  createdAt: string;
-  KotOrder: KotOrderLog[];
-  table: typeof Table;
-}
-
-// export interface KOTLogs {
-//   id: string;
-//   parcel: boolean;
-//   sessionLogsId: string | null;
-//   tableId: string | null;
-//   tableNumber: number | null;
-//   orderedBy: OrderBy;
-//   waiterId: string;
-//   chefId: string | null;
-//   restaurantId: string;
-//   createdAt: string;
-//   session: null | {
-//     tableId: string;
-//     tableNumber: number;
-//   };
-// }
 
 interface OrderModalProps {
-  data: string[] | undefined;
-  handleClose: () => void;
+  modalData: RetreveKotJson[]
+  closeModal: () => void
 }
-const OrderLogModal = (props: OrderModalProps) => {
-  const { data, handleClose } = props;
 
-  const { dishesh, tables } = useAppSelector(
-    (store) => store.restaurantInfo.defaultValues
-  );
+const OrderModal = (props: OrderModalProps) => {
+  const { modalData, closeModal } = props;
+  const { createdAt, tableNumber, tableSectionId, kotCount, printCount } = modalData[0].value;
 
-  // const noRepeatContainer = useAppSelector(
-  //   (store) => store.orderContainer.noRepeatContainer
-  // );
+  const { dishObj, tables } = useAppSelector(store => store.restaurantInfo.defaultValues);
 
-  // const orderInfo: Order | undefined = noRepeatContainer[data?.[0] || ""];
-
-  // const tableInfo = tables?.find(
-  //   (table) => table.id === orderInfo?.tableSectionId
-  // );
-
+  const tableInfo = tables.find(item => item.id === tableSectionId)
   return (
-    <Modal show={!!data} onHide={handleClose}>
-      <Modal.Header>
-        <Modal.Title>
-          {/* {tableInfo?.prefix}
-          {orderInfo?.tableNumber}
-          {tableInfo?.suffix} */}
-        </Modal.Title>
-        <Modal.Title>
-          Hello
-          {/* {formatDate(orderInfo?.createdAt)} */}
-        </Modal.Title>
+    <Modal show={true} onHide={closeModal} size="lg">
+      <Modal.Header closeButton>
+        <Modal.Title>Order Details</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {/*     <Table striped bordered>
+        <h6>Creation Date: {formatDate(createdAt)}</h6>
+        <h6>Table Number: {tableInfo?.prefix}{tableNumber}{tableInfo?.suffix}</h6>
+        <h6>KOT Count: {kotCount}</h6>
+        <h6>Print Count: {printCount}</h6>
+
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Dish Name</th>
+              <th>Size</th>
+              <th>Full Quantity</th>
+              <th>Half Quantity</th>
+            </tr>
+          </thead>
           <tbody>
-            {data?.map((orderUUID, index) => {
-              const currentOrderInfo = noRepeatContainer[orderUUID];
-              const dish = dishesh.find(
-                (dish) => dish.id === currentOrderInfo?.dishId
-              );
-              return (
-                <tr key={orderUUID}>
-                  <td>{index + 1}</td>
-                  <td>{dish?.name}</td>
-                  {currentOrderInfo.fullQuantity ? (
-                    <td>Full {currentOrderInfo.fullQuantity}</td>
-                  ) : null}
-                  {currentOrderInfo.halfQuantity ? (
-                    <td>Half {currentOrderInfo.halfQuantity}</td>
-                  ) : null}
-                  <td> {calculatePrice(currentOrderInfo, dish)}</td>
-                </tr>
-              );
-            })}
+            {modalData.map((item, idx) => (
+              <tr key={idx}>
+                <td>{dishObj[item.value.dishId].name}</td>
+                <td>{item.value.size}</td>
+                <td>{item.value.fullQuantity}</td>
+                <td>{item.value.halfQuantity}</td>
+              </tr>
+            ))}
           </tbody>
-        </Table> */}
+        </Table>
       </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={closeModal}>
+          Close
+        </Button>
+        <Button variant="primary">
+          Print
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 };
 
+
+
 function OrderLogs() {
-  // const [showSessionDetail, setSessionDetail] = useState<SessionLog>();
-  const kotPrintTemplate = useRef<any>();
-  const [selectedKot, setSelectKot] = useState<KOTLogs>();
-  const [kot, setKot] = useState<KOTLogs[]>([]);
-  // const noRepeatContainer = useAppSelector(
-  //   (store) => store.orderContainer.noRepeatContainer
-  // );
+  const [kot, setKot] = useState<RetreveKotJson[][]>([]);
+  const [modalData, setModalData] = useState<RetreveKotJson[]>([]);
 
   const { tables } = useAppSelector(
     (store) => store.restaurantInfo.defaultValues
@@ -147,119 +85,64 @@ function OrderLogs() {
     getKots();
   }, []);
 
-  useEffect(() => {
-    if (selectedKot) {
-      document.getElementById("clickToPrintKOT_In_Log")?.click();
-    }
-  }, [selectedKot]);
+
+  //function
+
+  const handleDetailClick = (group: RetreveKotJson[]) => {
+    setModalData(group);
+  };
+
+  const closeModal = () => {
+    setModalData([]);
+  };
+
 
   const getKots = () => {
     axiosGetFunction({
       parentUrl: "orders",
-      childUrl: "logs",
-      thenFunction: (data: KOTLogs[]) => {
-        setKot(data);
+      // childUrl: "logs",
+      thenFunction: (data: RetreveKotJson[]) => {
+        const groupedByKot: RetreveKotJson[][] = [];
+
+        data.forEach((order) => {
+          const kotId = order.value.kotId;
+          const index = groupedByKot.findIndex((group) => group[0].value.kotId === kotId);
+          if (index === -1) {
+            groupedByKot.push([order]);
+          } else {
+            groupedByKot[index].push(order);
+          }
+        });
+
+        setKot(groupedByKot)
       },
       useGlobalLoader: true,
     });
   };
 
-  // const convertNestedOrderKeyArrayToNestedOrderUUID_Array = (
-  //   nestedOrderKeysArray: string[][]
-  // ) => {
-  //   const tempContainer: string[][] = [];
-  //   nestedOrderKeysArray.forEach((orderKeyArray) => {
-  //     const temp: string[] = [];
-
-  //     orderKeyArray.forEach((orderKey) => {
-  //       temp.push(convertOrderKeyToUUID(orderKey));
-  //     });
-
-  //     tempContainer.push(temp);
-  //   });
-
-  //   return tempContainer;
-  // };
-
-  // const convertOrderKeyToUUID = (orderKey: string) => {
-  //   return orderKey.split(":")[0];
-  // };
-
   return (
     <>
-      {/* <OrderLogModal
-        data={selectedKot}
-        handleClose={() => setSelectKot(undefined)}
-      /> */}
-      <ComponentToPrint kot={selectedKot} ref={kotPrintTemplate} />
-      <ReactToPrint
-        content={() => kotPrintTemplate.current}
-        onAfterPrint={() => setSelectKot(undefined)}
-        trigger={() => (
-          <button
-            id="clickToPrintKOT_In_Log"
-            style={{
-              width: 0,
-              height: 0,
-              margin: 0,
-              outline: 0,
-              padding: 0,
-              display: "none",
-            }}
-          ></button>
-          // <img style={{ width: 24 }} src="/icons/print.svg/" alt="print icon" />
-        )}
-      />
+      {modalData.length > 0 ? <OrderModal closeModal={closeModal} modalData={modalData} /> : null}
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>Date/Time</th>
             <th>Table No.</th>
-            <th>Print KOT</th>
-            {/* <th>Pay</th> */}
-            {/* <th>View</th> */}
+            <th>Detail</th>
           </tr>
         </thead>
         <tbody>
-          {kot.map((kot) => {
-            // const orderDetail = noRepeatContainer?.[orderArray?.[0]];
-            // const tableInfo = tables?.find(
-            //   (table) => table.id === orderDetail?.tableSectionId
-            // );
-            const tableInfo = kot.parcel
-              ? null
-              : tables?.find((table) => table.id === kot?.tableId);
+          {kot.map((group) => {
+            const tableInfo = tables.find(item => item.id === group[0].value.tableSectionId)
             return (
-              <tr key={kot.id}>
-                <td
-                //  onClick={() => setSelectKot(orderArray)}
-                >
-                  {formatDate(kot.createdAt)}
+              <tr key={group[0]?.id} className={parseInt(group[0].value.printCount) === 0 ? 'table-danger' : ''}>
+                <td>{dateFormatter(parseInt(group[0].value.createdAt)).format("DD/MM, h:mm A")}</td>
+                <td>{tableInfo?.prefix}{group[0].value.tableNumber}{tableInfo?.suffix}</td>
+                <td>
+                  <Button variant="primary" onClick={() => handleDetailClick(group)}>{`Detail`}</Button>
                 </td>
-                <td
-                //  onClick={() => setSelectKot(orderArray)}
-                >
-                  {tableInfo
-                    ? `${tableInfo?.prefix}${kot?.tableNumber}${tableInfo?.suffix}`
-                    : "parcel"}
-                </td>
-                <td onClick={() => setSelectKot(kot)}>
-                  <img
-                    style={{ width: 24 }}
-                    src="/icons/print.svg/"
-                    alt="print icon"
-                  />
-                </td>
-                {/* <td>
-                  <img
-                    style={{ cursor: "pointer" }}
-                    // onClick={() => setSessionDetail(session)}
-                    src="/icons/edit.svg"
-                    alt="edit icon"
-                  />
-                </td> */}
               </tr>
-            );
+            )
           })}
         </tbody>
       </Table>
