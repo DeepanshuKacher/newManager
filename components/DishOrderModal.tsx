@@ -11,15 +11,13 @@ import Col from "react-bootstrap/Col";
 import { default as BootstrapTable } from "react-bootstrap/Table";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Select from "react-select";
-import { Dish, Table } from "../interfaces";
+import { Dish } from "../interfaces";
 import { axiosPostFunction, controllerUrls } from "../useFullItems/axios";
 import { StartSessionModal } from "./StartSessionModal";
 import styles from "../styles/Custom.module.css";
 import { Order } from "../pages/realtime/orders/redux";
 import Spinner from "react-bootstrap/Spinner";
 import { constants } from "../useFullItems/constants";
-import { TemplateToPrint } from "./pagesComponents/customize_restaurant/template/TemplateToPrint";
-import ReactToPrint from "react-to-print";
 
 interface Props {}
 
@@ -214,18 +212,7 @@ function DishOrderModal(props: Props) {
         handleClose={closeSessionModal}
         show={showSessionModal}
       />
-      <ReactToPrint
-        content={() => printComponentRef.current}
-        trigger={() => (
-          <button style={{ display: "none" }} id="printBillParcelButtonId">
-            Print Bill
-          </button>
-        )}
-        onAfterPrint={() => {
-          reset();
-          setOrderItem([]);
-        }}
-      />
+
       <Modal
         // size="lg"
         show={showOrderModal}

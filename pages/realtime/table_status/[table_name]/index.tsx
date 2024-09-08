@@ -7,14 +7,16 @@ import {
   axiosGetFunction,
 } from "../../../../useFullItems/axios";
 import { Order } from "../../orders/redux";
-import { calculatePrice, convertRedisOrderToOrder } from "../../../../useFullItems/functions";
+import {
+  calculatePrice,
+  convertRedisOrderToOrder,
+} from "../../../../useFullItems/functions";
 import { useRouter } from "next/router";
 import { OrderDetailModal } from "../../../../components/pagesComponents/realtime/orders/DetailModal";
 import { DishModal } from "../../../../components/pagesComponents/customize_restaurant/dishes/dishname/DishModal";
 import { Dish, OrderReturnFromRedis } from "../../../../interfaces";
-import Dropdown from 'react-bootstrap/Dropdown';
+import Dropdown from "react-bootstrap/Dropdown";
 import Modal from "react-bootstrap/Modal";
-import ReactToPrint from "react-to-print";
 
 import { TemplateToPrint } from "../../../../components/pagesComponents/customize_restaurant/template/TemplateToPrint";
 import { constants } from "../../../../useFullItems/constants";
@@ -22,8 +24,6 @@ import { constants } from "../../../../useFullItems/constants";
 //   JsonOrder,
 //   Kot,
 // } from "../../../../useFullItems/functions/onLoad/fetchAndStoreFunctions";
-
-
 
 /* Declare Types or interfaces here below */
 
@@ -41,7 +41,7 @@ type Operations = {
 
 interface RetreveOrdersFromServer {
   id: string;
-  value: OrderReturnFromRedis
+  value: OrderReturnFromRedis;
 }
 
 type PythonPrintFormat = {
@@ -57,7 +57,6 @@ enum OperationType {
   Divide = "Divide",
   Percentage = "Percentage",
 }
-
 
 /* Declare Types or interfaces here above */
 
@@ -75,7 +74,7 @@ function DeleteConformationModal({
   orderId: string;
   setOrderId: any;
   orderPrice: number | undefined;
-  kotId?: Order['orderId'];
+  kotId?: Order["orderId"];
   refreshFunction?: any;
 }) {
   const deleteOrder = () => {
@@ -110,9 +109,6 @@ function DeleteConformationModal({
   );
 }
 
-
-
-
 function TableSession() {
   /* initialization */
 
@@ -130,7 +126,7 @@ function TableSession() {
   const [orderDetail, setOrderDetail] = useState<Order>();
   const [dishDetail, setDishDetail] = useState<Dish>();
   const [deleteItemName, setDeleteItemName] = useState("");
-  const [deleteKotId, setDeleteKotId] = useState<Order['orderId']>();
+  const [deleteKotId, setDeleteKotId] = useState<Order["orderId"]>();
   const [deleteItemPrice, setDeleteItemPrice] = useState<number>();
   const [deleteItemOrderId, setDeleteItemOrderId] = useState("");
   const [ws, setWs] = useState<WebSocket | null>(null);
@@ -141,7 +137,7 @@ function TableSession() {
 
   const { billingTable } = useAppSelector((store) => store);
 
-  const { tables, dishObj } = useAppSelector(
+  const { tables, dishObj, id } = useAppSelector(
     (store) => store.restaurantInfo.defaultValues
   );
 
@@ -164,11 +160,10 @@ function TableSession() {
   }, []);
 
   useEffect(() => {
-
-    const socket = new WebSocket('ws://localhost:8765/bill');
+    const socket = new WebSocket("ws://localhost:8765/bill");
 
     socket.onopen = () => {
-      if (constants.IS_DEVELOPMENT) console.log('WebSocket connected');
+      if (constants.IS_DEVELOPMENT) console.log("WebSocket connected");
       setIsWebSocketOpen(true);
       setWs(socket);
     };
@@ -178,13 +173,14 @@ function TableSession() {
     };
 
     socket.onerror = (error) => {
-      if (constants.IS_DEVELOPMENT) console.error('WebSocket error:', error);
-      setIsWebSocketOpen(false)
+      if (constants.IS_DEVELOPMENT) console.error("WebSocket error:", error);
+      setIsWebSocketOpen(false);
     };
 
     socket.onclose = (event) => {
-      if (constants.IS_DEVELOPMENT) console.log('WebSocket closed:', event.reason);
-      setIsWebSocketOpen(false)
+      if (constants.IS_DEVELOPMENT)
+        console.log("WebSocket closed:", event.reason);
+      setIsWebSocketOpen(false);
     };
 
     return () => {
@@ -192,39 +188,49 @@ function TableSession() {
         socket.close();
       }
     };
-  }, [])
+  }, []);
 
   /* functions */
 
   const printBillThroughWebsocket = () => {
     if (ws && ws.readyState === WebSocket.OPEN && sessionId) {
-
       const itemToSendForPrint: PythonPrintFormat[] = [];
 
       for (let x of tableOrders) {
-        const { dishId, fullQuantity, halfQuantity, size } = x.value
-
+        const { dishId, fullQuantity, halfQuantity, size } = x.value;
 
         const dishInfo = dishObj[dishId];
 
-        const fullQyt = parseInt(fullQuantity)
-        const halfQyt = parseInt(halfQuantity)
+        const fullQyt = parseInt(fullQuantity);
+        const halfQyt = parseInt(halfQuantity);
         if (fullQyt && halfQyt) {
-          itemToSendForPrint.push({ name: dishInfo?.name + "- F", quantity: fullQyt, price: (dishInfo['price'][size]?.full || 0) })
-          itemToSendForPrint.push({ name: dishInfo?.name + "- H", quantity: halfQyt, price: (dishInfo['price'][size]?.half || 0) })
-        }
-        else if (fullQyt) {
-          itemToSendForPrint.push({ name: dishInfo?.name + "- F", quantity: fullQyt, price: (dishInfo['price'][size]?.full || 0) })
+          itemToSendForPrint.push({
+            name: dishInfo?.name + "- F",
+            quantity: fullQyt,
+            price: dishInfo["price"][size]?.full || 0,
+          });
+          itemToSendForPrint.push({
+            name: dishInfo?.name + "- H",
+            quantity: halfQyt,
+            price: dishInfo["price"][size]?.half || 0,
+          });
+        } else if (fullQyt) {
+          itemToSendForPrint.push({
+            name: dishInfo?.name + "- F",
+            quantity: fullQyt,
+            price: dishInfo["price"][size]?.full || 0,
+          });
         } else if (halfQyt) {
-          itemToSendForPrint.push({ name: dishInfo?.name + "- H", quantity: halfQyt, price: (dishInfo['price'][size]?.half || 0) })
+          itemToSendForPrint.push({
+            name: dishInfo?.name + "- H",
+            quantity: halfQyt,
+            price: dishInfo["price"][size]?.half || 0,
+          });
         }
       }
-      ws.send(
-        JSON.stringify(itemToSendForPrint)
-      )
+      ws.send(JSON.stringify(itemToSendForPrint));
     }
-  }
-
+  };
 
   const disableOrderModal = () => setOrderDetail(undefined);
 
@@ -256,7 +262,7 @@ function TableSession() {
   //     });
   // };
 
-  const clearSession = (modeofPayment: 'cash' | 'online') => {
+  const clearSession = (modeofPayment: "cash" | "online") => {
     if (sessionId)
       axiosDeleteFunction({
         parentUrl: "sessions",
@@ -264,7 +270,7 @@ function TableSession() {
         data: {
           tableSectionId: billingTable.tableSectionId,
           tableNumber: billingTable.tableNumber,
-          modeOfIncome: modeofPayment
+          modeOfIncome: modeofPayment,
         },
         useGlobalLoader: true,
         thenFunction: routerPushToTableStatusPage,
@@ -276,7 +282,7 @@ function TableSession() {
     // if (tableOrders?.value.orders.length)
     for (let y of tableOrders) {
       // for (let y of x.value.orders) {
-      const dish = dishObj[y.value.dishId]
+      const dish = dishObj[y.value.dishId];
       totalPrice += calculatePrice(convertRedisOrderToOrder(y.value), dish);
       // }
     }
@@ -305,6 +311,8 @@ function TableSession() {
         prefix={selectedTableSection?.prefix}
         suffix={selectedTableSection?.suffix}
         tableNumber={billingTable?.tableNumber || 0}
+        retaurantId={id}
+        tableSectionId={selectedTableSection?.id}
       />
       {orderDetail && (
         <OrderDetailModal
@@ -337,7 +345,6 @@ function TableSession() {
           {selectedTableSection?.suffix}
         </h3>
         <div className="d-flex flex-row ">
-
           <Button
             variant="success"
             size="sm"
@@ -354,28 +361,25 @@ function TableSession() {
           >
             Back
           </Button>
-          <Button
-            size="sm"
-            variant="info"
-            onClick={getData}
-            className="me-2"
-          >
+          <Button size="sm" variant="info" onClick={getData} className="me-2">
             Refresh
           </Button>
-          <Dropdown
-
-          >
-            <Dropdown.Toggle variant="primary" id="dropdown-basic"
-
+          <Dropdown>
+            <Dropdown.Toggle
+              variant="primary"
+              id="dropdown-basic"
               className="me-2"
             >
               Clear Table
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              <Dropdown.Item onClick={() => clearSession('cash')}>Cash Payment</Dropdown.Item>
-              <Dropdown.Item onClick={() => clearSession('online')}>Online Payment</Dropdown.Item>
-
+              <Dropdown.Item onClick={() => clearSession("cash")}>
+                Cash Payment
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => clearSession("online")}>
+                Online Payment
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
           {/* <Button
@@ -395,11 +399,11 @@ function TableSession() {
 
           {/* )} */}
           {/* content={() => componentRef.current} */}
-          {/* /> */}</div>
+          {/* /> */}
+        </div>
       </div>
       <Table bordered hover>
         <thead>
-
           <tr>
             <th>#</th>
             <th>Dish Name</th>
@@ -409,9 +413,11 @@ function TableSession() {
         </thead>
         <tbody>
           {tableOrders?.map((item, index) => {
-
-            const dish = dishObj[item.value.dishId]
-            const price = calculatePrice(convertRedisOrderToOrder(item.value), dish);
+            const dish = dishObj[item.value.dishId];
+            const price = calculatePrice(
+              convertRedisOrderToOrder(item.value),
+              dish
+            );
 
             return (
               <tr key={item.value.orderId}>
@@ -424,7 +430,9 @@ function TableSession() {
                 </td>
                 <td
                   style={{ cursor: "pointer" }}
-                  onClick={() => setOrderDetail(convertRedisOrderToOrder(item.value))}
+                  onClick={() =>
+                    setOrderDetail(convertRedisOrderToOrder(item.value))
+                  }
                 >
                   ₹{price}
                 </td>
@@ -441,7 +449,6 @@ function TableSession() {
                 </td>
               </tr>
             );
-
           })}
 
           <tr>

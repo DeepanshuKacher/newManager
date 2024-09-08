@@ -5,7 +5,11 @@ import styles from "../../../../styles/MarkDown.module.css";
 import { Order } from "../../../../pages/realtime/orders/redux";
 import { useAppSelector } from "../../../../useFullItems/redux";
 import { calculatePriceForOrder } from "../../../../useFullItems/functions";
+import QRCode from "react-qr-code";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 import dateFormatter from "dayjs";
+import { constants } from "../../../../useFullItems/constants";
 
 enum OperationType {
   Plus = "Plus",
@@ -36,6 +40,8 @@ interface Props {
   tableNumber?: number;
   shouldDisplayNone?: boolean;
   kotNumber?: number;
+  tableSectionId?: number;
+  retaurantId?: string;
 }
 
 const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
@@ -48,6 +54,8 @@ const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
     tableNumber,
     shouldDisplayNone,
     kotNumber,
+    retaurantId,
+    tableSectionId,
   } = props;
 
   // console.log({ operationsArray });
@@ -95,64 +103,74 @@ const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
   };
 
   return (
-    <div
-      style={{
-        width: "300px",
-        // textAlign: "center",
-        paddingLeft: "15px",
-        paddingRight: "10px",
-        // display: undefined,
-        // display: "none",
-        // backgroundColor: "blue",
-        // scale: "0.8",
-      }}
-      ref={ref}
-      className={styles.marzinZero}
-    >
-      <div className={styles.upperMarkdownDiv}>
-        <ReactMarkdown>{upperMarkDown}</ReactMarkdown>
-      </div>
-      <div>
-        <p className={styles.infoDivPara}>
-          Date/Time: {dateFormatter(new Date()).format("D-MMM-YY, h:mm A")}
-        </p>
-        <p className={styles.infoDivPara}>
-          Table/Room No: {prefix}
-          {tableNumber ? tableNumber : ""}
-          {suffix}
-        </p>
-        {kotNumber ? (
-          <p className={styles.infoDivPara}>Kot No.: {kotNumber}</p>
-        ) : null}
-      </div>
-      <hr />
-      <table
-        style={{
-          fontSize: "small",
-          // backgroundColor: "blue",
-          width: "100%",
-        }}
-      >
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Qty</th>
-            <th>Rate</th>
-            <th>Amt</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders?.map((order) => {
-            const dish = dishObj[order.dishId];
+    <Row className="p-2" xs="auto">
+      <Col>
+        <div className={styles.upperMarkdownDiv}>
+          <ReactMarkdown>{upperMarkDown}</ReactMarkdown>
+        </div>
+        <div>
+          <p className={styles.infoDivPara}>
+            Date/Time: {dateFormatter(new Date()).format("D-MMM-YY, h:mm A")}
+          </p>
+          <p className={styles.infoDivPara}>
+            Table/Room No: {prefix}
+            {tableNumber ? tableNumber : ""}
+            {suffix}
+          </p>
+          {kotNumber ? (
+            <p className={styles.infoDivPara}>Kot No.: {kotNumber}</p>
+          ) : null}
+        </div>
+        <hr />
+        <table
+          style={{
+            fontSize: "small",
+            // backgroundColor: "blue",
+            width: "100%",
+          }}
+        >
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Rate</th>
+              <th>Amt</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders?.map((order) => {
+              const dish = dishObj[order.dishId];
 
-            const fullQuantityNumber = order.fullQuantity;
-            const halfQuantityNumber = order.halfQuantity;
+              const fullQuantityNumber = order.fullQuantity;
+              const halfQuantityNumber = order.halfQuantity;
 
-            if (fullQuantityNumber > 0 && halfQuantityNumber > 0)
-              return (
-                <React.Fragment key={order.orderId + fullQuantityNumber}>
-                  <tr>
-                    <td>{dish.name} - F</td>
+              if (fullQuantityNumber > 0 && halfQuantityNumber > 0)
+                return (
+                  <React.Fragment key={order.orderId + fullQuantityNumber}>
+                    <tr>
+                      <td>{dish.name} - F</td>
+                      <td>{fullQuantityNumber}</td>
+                      <td>{dish?.price?.[order?.size]?.full}</td>
+                      <td>
+                        {fullQuantityNumber *
+                          (dish?.price?.[order?.size]?.full || 0)}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>{dish.name} - H</td>
+                      <td>{halfQuantityNumber}</td>
+                      <td>{dish?.price?.[order?.size]?.half}</td>
+                      <td>
+                        {halfQuantityNumber *
+                          (dish?.price?.[order?.size]?.half || 0)}
+                      </td>
+                    </tr>
+                  </React.Fragment>
+                );
+              else if (fullQuantityNumber > 0)
+                return (
+                  <tr key={order.orderId + fullQuantityNumber}>
+                    <td>{dish.name}</td>
                     <td>{fullQuantityNumber}</td>
                     <td>{dish?.price?.[order?.size]?.full}</td>
                     <td>
@@ -160,8 +178,11 @@ const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
                         (dish?.price?.[order?.size]?.full || 0)}
                     </td>
                   </tr>
-                  <tr>
-                    <td>{dish.name} - H</td>
+                );
+              else if (halfQuantityNumber > 0)
+                return (
+                  <tr key={order.orderId + halfQuantityNumber}>
+                    <td>{dish.name}</td>
                     <td>{halfQuantityNumber}</td>
                     <td>{dish?.price?.[order?.size]?.half}</td>
                     <td>
@@ -169,74 +190,57 @@ const TemplateToPrint = React.forwardRef((props: Props, ref: any) => {
                         (dish?.price?.[order?.size]?.half || 0)}
                     </td>
                   </tr>
-                </React.Fragment>
-              );
-            else if (fullQuantityNumber > 0)
-              return (
-                <tr key={order.orderId + fullQuantityNumber}>
-                  <td>{dish.name}</td>
-                  <td>{fullQuantityNumber}</td>
-                  <td>{dish?.price?.[order?.size]?.full}</td>
-                  <td>
-                    {fullQuantityNumber *
-                      (dish?.price?.[order?.size]?.full || 0)}
-                  </td>
-                </tr>
-              );
-            else if (halfQuantityNumber > 0)
-              return (
-                <tr key={order.orderId + halfQuantityNumber}>
-                  <td>{dish.name}</td>
-                  <td>{halfQuantityNumber}</td>
-                  <td>{dish?.price?.[order?.size]?.half}</td>
-                  <td>
-                    {halfQuantityNumber *
-                      (dish?.price?.[order?.size]?.half || 0)}
-                  </td>
-                </tr>
-              );
-          })}
+                );
+            })}
 
-          <tr style={{ borderTop: "solid grey 1px" }}>
-            <th colSpan={3}>Total</th>
-            <th>{subtotal}</th>
-          </tr>
-          {operationsArray?.map((operation, index) => {
-            return (
-              <tr key={index}>
-                <th>{operation.label}</th>
-                <td colSpan={2}>
-                  {operation.number}
-                  {operation.operation === "Percentage"
-                    ? "%"
-                    : operation.operation === "Plus"
+            <tr style={{ borderTop: "solid grey 1px" }}>
+              <th colSpan={3}>Total</th>
+              <th>{subtotal}</th>
+            </tr>
+            {operationsArray?.map((operation, index) => {
+              return (
+                <tr key={index}>
+                  <th>{operation.label}</th>
+                  <td colSpan={2}>
+                    {operation.number}
+                    {operation.operation === "Percentage"
+                      ? "%"
+                      : operation.operation === "Plus"
                       ? "+"
                       : "nil"}
-                </td>
-                <td>
-                  {calculateOperations(
-                    operation.operation,
-                    operation.number,
-                    // operation.gainLoss,
-                    subtotal
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-          <tr>
-            <th colSpan={3}>Grand Total</th>
-            <th>{calculateGrandTotal(operationsArray, subtotal)}</th>
-          </tr>
-        </tbody>
-      </table>
-      <div className={styles.lowerMachine}>
-        <p style={{ fontSize: "small", textAlign: "center" }}>
-          Thank You Visit Again
-        </p>
-      </div>
+                  </td>
+                  <td>
+                    {calculateOperations(
+                      operation.operation,
+                      operation.number,
+                      // operation.gainLoss,
+                      subtotal
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+            <tr>
+              <th colSpan={3}>Grand Total</th>
+              <th>{calculateGrandTotal(operationsArray, subtotal)}</th>
+            </tr>
+          </tbody>
+        </table>
+        <div className={styles.lowerMachine}>
+          <p style={{ fontSize: "small", textAlign: "center" }}>
+            Thank You Visit Again
+          </p>
+        </div>
+      </Col>
       {/* <ReactMarkdown>{lowerMarkDown}</ReactMarkdown> */}
-    </div>
+      {tableNumber && retaurantId && (
+        <Col className="m-2">
+          <QRCode
+            value={`${constants.BASE_URL}/foodie/${retaurantId}/${tableSectionId}/${tableNumber}`}
+          />
+        </Col>
+      )}
+    </Row>
   );
 });
 

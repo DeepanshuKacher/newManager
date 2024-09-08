@@ -34,7 +34,13 @@ type Operations = {
   gainLoss: GainLoss;
 };
 
-const Template = () => {
+interface Props {
+  tableSectionId: number;
+  retaurantId: string;
+}
+
+const Template = (props: Props) => {
+  const { retaurantId, tableSectionId } = props;
   const [upperMarkDown, setUpperMarkDown] = useState("");
   const [showAddOperationModal, setShowAddOperationModal] = useState(false);
   const [operationsArray, setOperationArray] = useState<Operations[]>([]);
@@ -101,6 +107,8 @@ const Template = () => {
               prefix="A"
               suffix="S"
               tableNumber={10}
+              retaurantId={retaurantId}
+              tableSectionId={tableSectionId}
             />
           </Col>
           <Col>

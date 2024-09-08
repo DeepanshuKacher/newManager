@@ -5,13 +5,21 @@ import { mqttFunction } from ".";
 export const mqttConnection = (restaurantId: string, selfId: string) => {
   if (!(restaurantId && selfId)) return alert("Please reload");
 
-  const client = mqtt.connect({
-    port: parseInt(privateConstants.mqttPort!),
-    clientId: selfId,
-    protocol: 'wss',
-    hostname: privateConstants.mqttHostName
-  });
+  // const client = mqtt.connect({
+  //   port: parseInt(privateConstants.mqttPort!),
+  //   clientId: "Iamfuckinggood",
+  //   protocol: "ws",
+  //   hostname: privateConstants.mqttHostName,
+  // });
 
+  const client = mqtt.connect(`wss://mqtt.eatrofoods.com:8883`, {
+    clientId: "Iamfuckinggood",
+    // username: "anku",
+    // password: "anku123",
+
+    // username: restaurantId,
+    // password: "eatrofoods",
+  });
   // console.log({
   //   host: privateConstants.mqttHost,
   //   port: parseInt(privateConstants.mqttPort!),
@@ -21,7 +29,6 @@ export const mqttConnection = (restaurantId: string, selfId: string) => {
   // const client = mqtt.connect(`wss://mqtt.eatrofoods.com:8883`,{
   //   clientId:selfId
   // })
-
 
   client.on("connect", () => {
     client.subscribe(
