@@ -40,7 +40,7 @@ interface Props {
   tableNumber?: number;
   shouldDisplayNone?: boolean;
   kotNumber?: number;
-  tableSectionId?: number;
+  tableSectionId?: string;
   retaurantId?: string;
 }
 
