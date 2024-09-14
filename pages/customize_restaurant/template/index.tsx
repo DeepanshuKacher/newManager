@@ -35,7 +35,7 @@ type Operations = {
 };
 
 interface Props {
-  tableSectionId: number;
+  tableSectionId: string;
   retaurantId: string;
 }
 
